@@ -29,14 +29,15 @@ service cloud.firestore {
       allow delete: if isOfficer();
     }
 
-    // Officer inbox: a thread is visible only to its two participants,
-    // and both sides must be officers.
+    // Officer inbox: DMs (2 people) and group chats (up to 20). A thread is
+    // visible only to its participants; the member list is fixed at creation.
     match /threads/{tid} {
       allow read: if isOfficer()
         && request.auth.token.email.lower() in resource.data.participants;
       allow create: if isOfficer()
         && request.auth.token.email.lower() in request.resource.data.participants
-        && request.resource.data.participants.size() == 2;
+        && request.resource.data.participants.size() >= 2
+        && request.resource.data.participants.size() <= 20;
       allow update: if isOfficer()
         && request.auth.token.email.lower() in resource.data.participants
         && request.resource.data.participants == resource.data.participants;

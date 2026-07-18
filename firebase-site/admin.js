@@ -1023,6 +1023,13 @@ function fmtTs(ts) {
 }
 function scrollBottom(el) { el.scrollTop = el.scrollHeight; }
 function otherOf(t) { return (t.participants || []).find(p => p !== me) || me; }
+// Display name of a thread: its group name, or the other person for a DM.
+function nameOf(t) { return t.isGroup ? (t.name || 'Group chat') : otherOf(t); }
+function setDMHead(t) {
+  $('dm-head-name').textContent = nameOf(t);
+  $('dm-head-mem').textContent = t.isGroup ? (t.participants || []).join(', ') : '';
+  $('dm-head-mem').hidden = !t.isGroup;
+}
 
 function stopChat() {
   if (unsubRoom) { unsubRoom(); unsubRoom = null; }
@@ -1039,10 +1046,13 @@ async function startChat() {
   unsubRoom = await store.onChat(renderRoom);
   unsubThreads = await store.myThreads(renderChatThreads);
   const officers = await store.listOfficers();
-  $('nt-officer').innerHTML = officers
-    .filter(o => o.email.toLowerCase() !== me)
+  const others = officers.filter(o => o.email.toLowerCase() !== me);
+  $('nt-officer').innerHTML = others
     .map(o => `<option value="${esc(o.email)}">${esc(o.name || o.email)}</option>`).join('')
     || '<option value="">(no other officers yet)</option>';
+  $('ng-members').innerHTML = others
+    .map(o => `<label><input type="checkbox" value="${esc(o.email)}"> ${esc(o.name || o.email)}</label>`).join('')
+    || '<div class="chat-note" style="padding:0">No other officers yet — add them on the Officers page first.</div>';
   showInboxList();
 }
 
@@ -1069,9 +1079,12 @@ function renderChatThreads(threads) {
   chatThreads = threads;
   $('thread-list').innerHTML = threads.map(t => `
     <div class="thread-item${t.id === activeTid ? ' active' : ''}" data-tid="${esc(t.id)}">
-      <b>${esc(otherOf(t))}</b>
+      <b>${t.isGroup ? '👥 ' : ''}${esc(nameOf(t))}</b>
       <small>${esc(t.lastText || 'No messages yet')}</small>
     </div>`).join('') || '<div class="chat-note">No conversations yet — pick an officer above.</div>';
+  // Keep the open conversation's header fresh (covers just-created threads).
+  const at = threads.find(x => x.id === activeTid);
+  if (at) setDMHead(at);
   const t0 = threads[0];
   if (t0 && t0.updatedAt && t0.updatedAt.toMillis) maybeChatDot(t0.updatedAt.toMillis(), t0.lastFrom === me);
 }
@@ -1088,7 +1101,8 @@ function renderDM(msgs) {
 async function openDM(tid) {
   activeTid = tid;
   const t = chatThreads.find(x => x.id === tid);
-  $('dm-head-name').textContent = t ? otherOf(t) : 'Conversation';
+  if (t) setDMHead(t);
+  else { $('dm-head-name').textContent = 'Conversation'; $('dm-head-mem').textContent = ''; $('dm-head-mem').hidden = true; }
   $('inbox-list-view').classList.remove('active');
   $('inbox-dm-view').classList.add('active');
   if (unsubDM) { unsubDM(); unsubDM = null; }
@@ -1123,6 +1137,21 @@ $('new-thread').addEventListener('submit', async e => {
   try {
     if (!$('nt-officer').value) throw new Error('No other officers to message yet.');
     const tid = await store.openThread($('nt-officer').value);
+    openDM(tid);
+  } catch (err) { toast(err.message); }
+});
+
+$('ng-open').addEventListener('click', () => { $('new-group').hidden = !$('new-group').hidden; });
+$('ng-cancel').addEventListener('click', () => { $('new-group').hidden = true; });
+
+$('new-group').addEventListener('submit', async e => {
+  e.preventDefault();
+  const picked = [...document.querySelectorAll('#ng-members input:checked')].map(c => c.value);
+  try {
+    if (!picked.length) throw new Error('Tick at least one officer to put in the group.');
+    const tid = await store.createGroup($('ng-name').value, picked);
+    $('new-group').reset();
+    $('new-group').hidden = true;
     openDM(tid);
   } catch (err) { toast(err.message); }
 });

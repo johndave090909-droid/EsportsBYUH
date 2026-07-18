@@ -144,6 +144,7 @@ const localStore = {
   async sendChat() { throw new Error('Chat needs the live Firebase site.'); },
   async deleteChat() { throw new Error('Chat needs the live Firebase site.'); },
   async openThread() { throw new Error('Chat needs the live Firebase site.'); },
+  async createGroup() { throw new Error('Chat needs the live Firebase site.'); },
   async myThreads() { return () => {}; },
   async onThreadMessages() { return () => {}; },
   async sendDM() { throw new Error('Chat needs the live Firebase site.'); }
@@ -327,6 +328,26 @@ const fireStore = {
     await fb.F.setDoc(fb.F.doc(fb.db, 'threads', tid),
       { participants: [u.email, other].sort(), updatedAt: fb.F.serverTimestamp() }, { merge: true });
     return tid;
+  },
+  // A group chat is a thread with 3+ possible members, a name, and isGroup.
+  // Members are fixed at creation; the creator is always included.
+  async createGroup(name, emails) {
+    await init();
+    const u = this.currentUser();
+    if (!u) throw new Error('Sign in first.');
+    const set = new Set((emails || []).map(e => String(e).toLowerCase().trim()).filter(e => e.includes('@')));
+    set.add(u.email);
+    const participants = [...set].sort();
+    if (participants.length < 2) throw new Error('Pick at least one other officer for the group.');
+    if (participants.length > 20) throw new Error('Groups are limited to 20 members.');
+    const ref = await fb.F.addDoc(fb.F.collection(fb.db, 'threads'), {
+      participants,
+      name: String(name || '').trim() || 'Group chat',
+      isGroup: true,
+      createdBy: u.email,
+      updatedAt: fb.F.serverTimestamp()
+    });
+    return ref.id;
   },
   async myThreads(cb) {
     await init();

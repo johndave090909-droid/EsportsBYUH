@@ -329,25 +329,34 @@
   <div id="chat-pop" hidden>
     <div class="chat-top">
       <div class="tabs" style="margin-top:0;border-bottom:none">
-        <button type="button" class="active" data-ctab="room">OFFICER CHAT</button>
+        <button type="button" class="active" data-ctab="room">ALL OFFICERS</button>
         <button type="button" data-ctab="inbox">INBOX</button>
       </div>
       <button type="button" class="linkbtn" id="chat-close" title="Close">✕</button>
     </div>
     <div id="ctab-room" class="ctab active">
+      <div class="chat-hint">Every officer is in this group automatically — new officers join the moment they're added.</div>
       <div id="room-list" class="msg-list"></div>
       <form id="room-form" class="msg-form">
-        <input id="room-input" maxlength="500" placeholder="Message the officers…" autocomplete="off">
+        <input id="room-input" maxlength="500" placeholder="Message all officers…" autocomplete="off">
         <button class="btn">SEND</button>
       </form>
     </div>
     <div id="ctab-inbox" class="ctab">
       <div id="inbox-list-view" class="inbox-view active">
-        <form id="new-thread"><select id="nt-officer"></select><button class="btn" style="border:none;cursor:pointer">NEW</button></form>
+        <form id="new-thread"><select id="nt-officer"></select><button class="btn" style="border:none;cursor:pointer">NEW</button><button type="button" class="btn" id="ng-open" style="border:none;cursor:pointer">+ GROUP</button></form>
+        <form id="new-group" hidden>
+          <input id="ng-name" maxlength="40" placeholder="Group name — e.g. Tournament crew" autocomplete="off">
+          <div id="ng-members"></div>
+          <div class="ng-actions">
+            <button class="btn" style="border:none;cursor:pointer">CREATE GROUP</button>
+            <button type="button" class="linkbtn" id="ng-cancel">Cancel</button>
+          </div>
+        </form>
         <div id="thread-list"></div>
       </div>
       <div id="inbox-dm-view" class="inbox-view">
-        <div class="dm-head"><button type="button" class="linkbtn" id="dm-back">←</button> <span id="dm-head-name">Conversation</span></div>
+        <div class="dm-head"><button type="button" class="linkbtn" id="dm-back">←</button> <span id="dm-head-name">Conversation</span><small id="dm-head-mem" hidden></small></div>
         <div id="dm-list" class="msg-list"></div>
         <form id="dm-form" class="msg-form">
           <input id="dm-input" maxlength="500" placeholder="Write a message…" autocomplete="off">
