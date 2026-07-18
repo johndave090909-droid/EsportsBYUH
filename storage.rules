@@ -3,7 +3,8 @@ service firebase.storage {
   match /b/{bucket}/o {
 
     // Same officer allowlist as Firestore: the email must exist as a doc ID
-    // in the officers collection (cross-service rules lookup).
+    // in the officers collection. Cross-service lookup — the Storage service
+    // agent needs the "Firebase Rules Firestore Service Agent" IAM role.
     function isOfficer() {
       return request.auth != null
         && request.auth.token.email != null
