@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<meta name="robots" content="noindex">
+<title>Admin — Seasider Esports | BYU–Hawaii</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body class="admin">
+
+<!-- ============ LOGIN ============ -->
+<div id="login-view" class="login-wrap" hidden>
+  <div class="login-card">
+    <a class="logo" href="index.html" style="justify-content:center">
+      <span class="logo-mark">S</span>
+      <span class="logo-text"><b>SEASIDER ESPORTS</b><small>OFFICER PANEL</small></span>
+    </a>
+    <h1 class="cp">OFFICER LOGIN</h1>
+    <div id="demo-note" class="note" hidden>
+      <b>Demo mode</b> — data is stored in this browser only.<br>
+      Sign in with <b>officer@byuh.edu</b> / <b>seasiders</b>
+    </div>
+    <form id="form-login">
+      <label class="f">EMAIL<input type="email" id="login-email" required autocomplete="username"></label>
+      <label class="f">PASSWORD<input type="password" id="login-pass" required autocomplete="current-password"></label>
+      <div id="login-error" class="err" hidden></div>
+      <button class="btn" style="width:100%">SIGN IN</button>
+    </form>
+    <button type="button" class="btn-ghost" id="btn-google" style="width:100%;text-align:center;cursor:pointer" hidden>CONTINUE WITH GOOGLE</button>
+    <div id="live-extra" style="text-align:center;font-size:13px;color:#8B93A3" hidden>
+      <button type="button" class="linklike" id="btn-signup">Create an account</button>
+      &nbsp;·&nbsp;
+      <button type="button" class="linklike" id="btn-forgot">Forgot password</button>
+    </div>
+    <a class="backlink" href="index.html">← Back to site</a>
+  </div>
+</div>
+
+<!-- ============ APP ============ -->
+<div id="app-view" hidden>
+  <aside>
+    <a class="logo" href="index.html">
+      <span class="logo-mark">S</span>
+      <span class="logo-text"><b>SEASIDER ESPORTS</b><small>OFFICER PANEL</small></span>
+    </a>
+    <span class="mode-badge" id="mode-badge">DEMO MODE</span>
+    <nav class="adnav" id="adnav">
+      <button data-sec="home" class="active">HOME PAGE</button>
+      <button data-sec="matches">MATCHES</button>
+      <button data-sec="bracket">BRACKET</button>
+      <button data-sec="standings">STANDINGS</button>
+      <button data-sec="news">NEWS</button>
+      <button data-sec="photos">PHOTOS</button>
+      <button data-sec="videos">VIDEOS</button>
+      <button data-sec="site">SITE SETTINGS</button>
+      <button data-sec="officers">OFFICERS</button>
+    </nav>
+    <div class="side-foot">
+      <a href="index.html" target="_blank">View site ↗</a>
+      <div id="user-chip"></div>
+      <button class="btn-sm" id="btn-logout">LOG OUT</button>
+    </div>
+  </aside>
+
+  <main>
+
+    <!-- ============ HOME PAGE ============ -->
+    <section class="asec active" id="sec-home">
+      <h1>Home Page</h1>
+      <p class="hint">Hero banner, countdown, and the games grid. The "Upcoming Matches", "Announcements", and "Latest Video" sections of the home page fill in automatically from Matches, News, and Videos.</p>
+      <form id="form-home" class="panel card">
+        <div class="form-grid">
+          <label class="f">KICKER (SMALL LINE ABOVE TITLE)<input id="h-kicker"></label>
+          <label class="f">HERO IMAGE
+            <span class="imgpick"><input id="h-image" placeholder="Image URL — or upload →"><input type="file" id="h-image-file" data-target="h-image" accept="image/*" hidden><button type="button" class="btn-sm" data-file="h-image-file">UPLOAD</button></span>
+            <img class="prev" id="h-image-prev" alt="" hidden>
+          </label>
+          <label class="f">TITLE LINE 1<input id="h-title"></label>
+          <label class="f">TITLE LINE 2 (RED)<input id="h-accent"></label>
+          <label class="f wide">HERO PARAGRAPH<textarea id="h-text" rows="3"></textarea></label>
+          <label class="f chk"><input type="checkbox" id="h-cd-on"> SHOW COUNTDOWN</label>
+          <label class="f">COUNTDOWN TARGET<input type="datetime-local" id="h-cd-target"></label>
+        </div>
+        <h3 class="sub">GAMES GRID</h3>
+        <div id="games-list"></div>
+        <button type="button" class="btn-sm" id="btn-add-game">+ ADD GAME</button>
+        <div class="actions"><button class="btn">SAVE HOME PAGE</button></div>
+      </form>
+    </section>
+
+    <!-- ============ MATCHES ============ -->
+    <section class="asec" id="sec-matches">
+      <h1>Matches</h1>
+      <p class="hint">"Upcoming" matches appear on the Schedule tab (and the home page); "Final" matches appear on Results. When a match is played, press ENTER RESULT on its row and type the score — it moves to Results automatically. COPY duplicates a match (handy for weeklies).</p>
+      <form id="form-match" class="panel card">
+        <h3 id="match-form-title">ADD MATCH</h3>
+        <input type="hidden" id="mt-id">
+        <div class="form-grid">
+          <label class="f">GAME<input id="mt-game" list="game-options" required placeholder="e.g. VALORANT"><datalist id="game-options"></datalist></label>
+          <label class="f">STAGE / ROUND<input id="mt-stage" placeholder="e.g. Semifinal 1"></label>
+          <label class="f">TEAM A<input id="mt-a" list="team-options" required><datalist id="team-options"></datalist></label>
+          <label class="f">TEAM B<input id="mt-b" list="team-options" required></label>
+          <label class="f">DATE &amp; TIME<input type="datetime-local" id="mt-dt" required></label>
+          <label class="f">LOCATION<input id="mt-loc" placeholder="e.g. GCB 101 or Online"></label>
+          <label class="f">STATUS<select id="mt-status"><option value="upcoming">Upcoming</option><option value="final">Final (played)</option></select></label>
+          <label class="f" id="score-wrap">SCORE — TEAM A / TEAM B
+            <span style="display:flex;gap:8px"><input id="mt-sa" placeholder="A"><input id="mt-sb" placeholder="B"></span>
+          </label>
+        </div>
+        <div class="actions">
+          <button class="btn">SAVE MATCH</button>
+          <button type="button" class="btn-sm" id="mt-cancel" hidden>CANCEL EDIT</button>
+        </div>
+      </form>
+      <div class="listhead">SCHEDULED</div>
+      <div id="list-upcoming"></div>
+      <div class="listhead">RESULTS</div>
+      <div id="list-final"></div>
+
+      <h1 style="margin-top:40px;font-size:22px">Page Text &amp; Register Banner</h1>
+      <form id="form-matchpage" class="panel card">
+        <div class="form-grid">
+          <label class="f">KICKER<input id="mp-kicker"></label>
+          <label class="f">REGISTER BANNER TITLE<input id="mp-regtitle"></label>
+          <label class="f wide">INTRO TEXT (LEDE)<textarea id="mp-lede" rows="2"></textarea></label>
+          <label class="f">REGISTER BANNER TEXT<input id="mp-regtext"></label>
+          <label class="f">REGISTER BUTTON LABEL<input id="mp-regbtn"></label>
+        </div>
+        <p class="hint" style="margin:14px 0 0">The register button's link is set in Site Settings → "Register link".</p>
+        <div class="actions"><button class="btn">SAVE PAGE TEXT</button></div>
+      </form>
+    </section>
+
+    <!-- ============ BRACKET ============ -->
+    <section class="asec" id="sec-bracket">
+      <h1>Bracket</h1>
+      <p class="hint">Works for any format and any number of teams — odd or even. Type your team count and BUILD ROUNDS creates the right rounds automatically (with BYE slots when needed), or add rounds and matches by hand. Round names are editable and shown on the site; a blank team slot shows as TBD, a slot opposite a team as BYE; fill both scores and the loser dims automatically. Nothing changes on the site until you press SAVE BRACKET.</p>
+      <form id="form-bracket" class="panel card">
+        <label class="f wide" style="margin-bottom:14px">BRACKET TITLE<input id="b-title" placeholder="e.g. VALORANT — SPRING INVITATIONAL · 8 TEAMS"></label>
+        <div class="actions" style="margin-top:0">
+          <input type="number" id="b-teams" min="2" max="64" placeholder="# of teams" style="width:130px">
+          <button type="button" class="btn-sm" id="b-build">BUILD ROUNDS</button>
+          <button type="button" class="btn-sm" id="b-add-round">+ ADD ROUND</button>
+        </div>
+        <div class="bracket-edit" id="b-rounds"></div>
+        <div class="actions"><button class="btn">SAVE BRACKET</button></div>
+      </form>
+    </section>
+
+    <!-- ============ STANDINGS ============ -->
+    <section class="asec" id="sec-standings">
+      <h1>Standings</h1>
+      <p class="hint">Rows are ranked automatically by points (then map +/−). Check "qualified" to highlight a team in gold.</p>
+      <form id="form-standing" class="panel card">
+        <h3 id="standing-form-title">ADD TEAM ROW</h3>
+        <input type="hidden" id="st-idx" value="">
+        <div class="form-grid">
+          <label class="f">TEAM<input id="st-team" required></label>
+          <label class="f">POINTS<input type="number" id="st-pts" value="0"></label>
+          <label class="f">WINS<input type="number" id="st-w" value="0"></label>
+          <label class="f">LOSSES<input type="number" id="st-l" value="0"></label>
+          <label class="f">MAP +/− (E.G. +9 OR -2)<input id="st-diff" value="+0"></label>
+          <label class="f chk"><input type="checkbox" id="st-q"> QUALIFIED (HIGHLIGHTED)</label>
+        </div>
+        <div class="actions">
+          <button class="btn">SAVE ROW</button>
+          <button type="button" class="btn-sm" id="st-cancel" hidden>CANCEL EDIT</button>
+        </div>
+      </form>
+      <div id="standings-list"></div>
+      <form id="form-standings-note" class="panel card" style="margin-top:26px">
+        <label class="f wide">FOOTNOTE UNDER TABLE<input id="st-note"></label>
+        <div class="actions"><button class="btn">SAVE NOTE</button></div>
+      </form>
+    </section>
+
+    <!-- ============ NEWS ============ -->
+    <section class="asec" id="sec-news">
+      <h1>News</h1>
+      <p class="hint">Posts are listed newest first. One post can be pinned — it shows in the highlighted box at the top (with its optional link button). The three newest posts also appear on the home page.</p>
+      <form id="form-news" class="panel card">
+        <h3 id="news-form-title">ADD POST</h3>
+        <input type="hidden" id="n-id">
+        <div class="form-grid">
+          <label class="f">TITLE<input id="n-title" required></label>
+          <label class="f">TAG / CATEGORY<input id="n-tag" placeholder="e.g. TOURNAMENT, CLUB, RESULTS"></label>
+          <label class="f">DATE<input type="date" id="n-date" required></label>
+          <label class="f chk"><input type="checkbox" id="n-pinned"> PIN THIS POST (UNPINS OTHERS)</label>
+          <label class="f wide">BODY<textarea id="n-body" rows="4" required></textarea></label>
+          <label class="f">LINK TEXT (PINNED POST ONLY)<input id="n-linktext" placeholder="e.g. REGISTER NOW"></label>
+          <label class="f">LINK URL<input id="n-linkurl" placeholder="e.g. matches.html#register"></label>
+        </div>
+        <div class="actions">
+          <button class="btn">SAVE POST</button>
+          <button type="button" class="btn-sm" id="n-cancel" hidden>CANCEL EDIT</button>
+        </div>
+      </form>
+      <div id="news-admin-list"></div>
+    </section>
+
+    <!-- ============ PHOTOS ============ -->
+    <section class="asec" id="sec-photos">
+      <h1>Photos</h1>
+      <p class="hint">In live mode, uploads are compressed in the browser and stored in Firebase Storage. Use ↑ / ↓ to arrange the gallery.</p>
+      <form id="form-photo" class="panel card">
+        <h3 id="photo-form-title">ADD PHOTO</h3>
+        <input type="hidden" id="p-id">
+        <div class="form-grid">
+          <label class="f">CAPTION<input id="p-caption" required></label>
+          <label class="f">DATE LABEL<input id="p-date" placeholder="e.g. Aug 14"></label>
+          <label class="f">TILE SIZE<select id="p-size">
+            <option value="std">Standard (1×1)</option>
+            <option value="wide">Wide (2×1)</option>
+            <option value="big">Large (2×2)</option>
+          </select></label>
+          <label class="f">IMAGE
+            <span class="imgpick"><input id="p-image" placeholder="Image URL — or upload →"><input type="file" id="p-image-file" data-target="p-image" accept="image/*" hidden><button type="button" class="btn-sm" data-file="p-image-file">UPLOAD</button></span>
+            <img class="prev" id="p-image-prev" alt="" hidden>
+          </label>
+        </div>
+        <div class="actions">
+          <button class="btn">SAVE PHOTO</button>
+          <button type="button" class="btn-sm" id="p-cancel" hidden>CANCEL EDIT</button>
+        </div>
+      </form>
+      <div id="photo-admin-list"></div>
+    </section>
+
+    <!-- ============ VIDEOS ============ -->
+    <section class="asec" id="sec-videos">
+      <h1>Videos</h1>
+      <p class="hint">One video can be featured — it becomes the big card at the top of the Videos page and the "Latest Video" on the home page. Link the URL to Facebook/YouTube/Twitch, or upload a short clip straight to Firebase Storage (best for highlights — keep long VODs on social platforms, since file bandwidth is what costs money).</p>
+      <form id="form-video" class="panel card">
+        <h3 id="video-form-title">ADD VIDEO</h3>
+        <input type="hidden" id="v-id">
+        <div class="form-grid">
+          <label class="f">TITLE<input id="v-title" required></label>
+          <label class="f">TAG / GAME<input id="v-tag" placeholder="e.g. VALORANT · FALL CUP"></label>
+          <label class="f">VIDEO URL
+            <span class="imgpick"><input id="v-url" placeholder="https://... — or upload a file →"><input type="file" id="v-file" accept="video/*" data-upload="videos" data-target="v-url" hidden><button type="button" class="btn-sm" data-file="v-file">UPLOAD</button></span>
+          </label>
+          <label class="f">DURATION<input id="v-duration" placeholder="e.g. 6:41"></label>
+          <label class="f">DATE LABEL<input id="v-date" placeholder="e.g. Aug 9"></label>
+          <label class="f chk"><input type="checkbox" id="v-featured"> FEATURED (UNFEATURES OTHERS)</label>
+          <label class="f wide">DESCRIPTION (FEATURED CARD ONLY)<textarea id="v-desc" rows="2"></textarea></label>
+          <label class="f wide">THUMBNAIL
+            <span class="imgpick"><input id="v-thumb" placeholder="Image URL — or upload →"><input type="file" id="v-thumb-file" data-target="v-thumb" accept="image/*" hidden><button type="button" class="btn-sm" data-file="v-thumb-file">UPLOAD</button></span>
+            <img class="prev" id="v-thumb-prev" alt="" hidden>
+          </label>
+        </div>
+        <div class="actions">
+          <button class="btn">SAVE VIDEO</button>
+          <button type="button" class="btn-sm" id="v-cancel" hidden>CANCEL EDIT</button>
+        </div>
+      </form>
+      <div id="video-admin-list"></div>
+    </section>
+
+    <!-- ============ SITE SETTINGS ============ -->
+    <section class="asec" id="sec-site">
+      <h1>Site Settings</h1>
+      <p class="hint">Shared across every page: the red ticker bar, social links, the register link, and the footer line.</p>
+      <form id="form-site" class="panel card">
+        <div class="form-grid">
+          <label class="f wide">TICKER MESSAGES (ONE PER LINE)<textarea id="s-ticker" rows="4"></textarea></label>
+          <label class="f">FACEBOOK URL<input id="s-facebook"></label>
+          <label class="f">DISCORD INVITE URL<input id="s-discord"></label>
+          <label class="f">REGISTER LINK (ALL "REGISTER" BUTTONS)<input id="s-register" placeholder="e.g. a Google Form URL"></label>
+          <label class="f">FOOTER TEXT<input id="s-footer"></label>
+        </div>
+        <div class="actions"><button class="btn">SAVE SETTINGS</button></div>
+      </form>
+      <div class="panel card">
+        <h3>DATA TOOLS</h3>
+        <div class="actions" style="margin-top:0">
+          <button type="button" class="btn-sm" id="btn-seed">LOAD SAMPLE CONTENT</button>
+          <button type="button" class="btn-sm danger" id="btn-clear">CLEAR CONTENT (START FRESH)</button>
+          <button type="button" class="btn-sm danger" id="btn-reset" hidden>RESET EVERYTHING (DEMO)</button>
+        </div>
+        <p class="hint" id="mode-info" style="margin:16px 0 0"></p>
+      </div>
+    </section>
+
+    <!-- ============ OFFICERS ============ -->
+    <section class="asec" id="sec-officers">
+      <h1>Officers</h1>
+      <p class="hint" id="off-hint"></p>
+      <form id="form-officer" class="panel card">
+        <h3>ADD OFFICER</h3>
+        <div class="form-grid">
+          <label class="f">NAME<input id="o-name"></label>
+          <label class="f">EMAIL<input type="email" id="o-email" required></label>
+          <label class="f" id="o-pass-wrap">PASSWORD (DEMO MODE)<input type="password" id="o-pass"></label>
+        </div>
+        <div class="actions"><button class="btn">ADD OFFICER</button></div>
+      </form>
+      <div id="officer-list"></div>
+      <form id="form-mypass" class="panel card" style="margin-top:26px" hidden>
+        <h3>CHANGE MY PASSWORD</h3>
+        <div class="form-grid">
+          <label class="f">NEW PASSWORD<input type="password" id="my-pass" required minlength="6"></label>
+        </div>
+        <div class="actions"><button class="btn">CHANGE PASSWORD</button></div>
+      </form>
+    </section>
+
+    <!-- ============ LIVE PREVIEW ============ -->
+    <div id="preview-wrap">
+      <div class="preview-head">
+        <h3 class="cp">LIVE PREVIEW</h3>
+        <span class="hint-inline">draft preview only — visitors see saved content; nothing goes live until you press save</span>
+        <button type="button" class="btn-sm" id="preview-toggle">HIDE</button>
+      </div>
+      <iframe id="preview-frame" src="index.html" title="Site preview"></iframe>
+    </div>
+
+  </main>
+
+  <!-- ============ FLOATING CHAT (upper right) ============ -->
+  <button type="button" id="chat-fab" title="Officer chat" hidden>
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3C6.5 3 2 6.9 2 11.7c0 2.7 1.4 5.1 3.7 6.7V22l3.4-1.9c.9.3 1.9.4 2.9.4 5.5 0 10-3.9 10-8.8S17.5 3 12 3z"/></svg>
+    <span id="chat-dot" hidden></span>
+  </button>
+  <div id="chat-pop" hidden>
+    <div class="chat-top">
+      <div class="tabs" style="margin-top:0;border-bottom:none">
+        <button type="button" class="active" data-ctab="room">OFFICER CHAT</button>
+        <button type="button" data-ctab="inbox">INBOX</button>
+      </div>
+      <button type="button" class="linkbtn" id="chat-close" title="Close">✕</button>
+    </div>
+    <div id="ctab-room" class="ctab active">
+      <div id="room-list" class="msg-list"></div>
+      <form id="room-form" class="msg-form">
+        <input id="room-input" maxlength="500" placeholder="Message the officers…" autocomplete="off">
+        <button class="btn">SEND</button>
+      </form>
+    </div>
+    <div id="ctab-inbox" class="ctab">
+      <div id="inbox-list-view" class="inbox-view active">
+        <form id="new-thread"><select id="nt-officer"></select><button class="btn" style="border:none;cursor:pointer">NEW</button></form>
+        <div id="thread-list"></div>
+      </div>
+      <div id="inbox-dm-view" class="inbox-view">
+        <div class="dm-head"><button type="button" class="linkbtn" id="dm-back">←</button> <span id="dm-head-name">Conversation</span></div>
+        <div id="dm-list" class="msg-list"></div>
+        <form id="dm-form" class="msg-form">
+          <input id="dm-input" maxlength="500" placeholder="Write a message…" autocomplete="off">
+          <button class="btn">SEND</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast" hidden></div>
+<script type="module" src="admin.js"></script>
+</body>
+</html>

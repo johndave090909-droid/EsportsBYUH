@@ -1,0 +1,31 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // Same officer allowlist as Firestore: the email must exist as a doc ID
+    // in the officers collection (cross-service rules lookup).
+    function isOfficer() {
+      return request.auth != null
+        && request.auth.token.email != null
+        && firestore.exists(/databases/(default)/documents/officers/$(request.auth.token.email.lower()));
+    }
+
+    // Site images: public, officers upload, max 15 MB, images only.
+    match /images/{file} {
+      allow read: if true;
+      allow create, update: if isOfficer()
+        && request.resource.size < 15 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*');
+      allow delete: if isOfficer();
+    }
+
+    // Video clips: public, officers upload, max 500 MB, videos only.
+    match /videos/{file} {
+      allow read: if true;
+      allow create, update: if isOfficer()
+        && request.resource.size < 500 * 1024 * 1024
+        && request.resource.contentType.matches('video/.*');
+      allow delete: if isOfficer();
+    }
+  }
+}

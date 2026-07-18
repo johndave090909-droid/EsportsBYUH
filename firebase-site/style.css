@@ -1,0 +1,177 @@
+
+*{box-sizing:border-box}
+/* pages add .wait on <html> until live content renders (public.js removes it),
+   so the static fallback never flashes; a 3s inline failsafe reveals it if JS fails */
+html.wait section,html.wait .ticker{opacity:0}
+section,.ticker{transition:opacity .2s}
+body{margin:0;background:#0B0D12;color:#EDEFF3;font-family:Barlow,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#FDB913;text-decoration:none}a:hover{color:#FFD25E}
+.cp{font-family:'Chakra Petch',sans-serif}
+header{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:16px 40px;border-bottom:1px solid rgba(255,255,255,.08);position:sticky;top:0;background:rgba(11,13,18,.92);backdrop-filter:blur(8px);z-index:10}
+.logo{display:flex;align-items:center;gap:12px;color:#EDEFF3}
+.logo-mark{width:36px;height:36px;background:linear-gradient(135deg,#C8102E,#8F0B21);clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);display:flex;align-items:center;justify-content:center;font-family:'Chakra Petch',sans-serif;font-weight:700;color:#FDB913;font-size:15px}
+.logo-text{display:flex;flex-direction:column;line-height:1.05}
+.logo-text b{font-family:'Chakra Petch',sans-serif;font-weight:700;font-size:17px;letter-spacing:.06em}
+.logo-text small{font-size:11px;letter-spacing:.22em;color:#8B93A3}
+nav{display:flex;align-items:center;gap:28px;font-family:'Chakra Petch',sans-serif;font-size:14px;letter-spacing:.1em}
+nav a{color:#C9CFDA}nav a:hover{color:#fff}nav a.active{color:#FDB913}
+.btn{background:#C8102E;color:#fff;font-family:'Chakra Petch',sans-serif;font-weight:600;font-size:13px;letter-spacing:.12em;padding:11px 22px;clip-path:polygon(10px 0,100% 0,calc(100% - 10px) 100%,0 100%);display:inline-block}
+.btn:hover{background:#E31837;color:#fff}
+.btn-lg{font-size:14px;padding:15px 30px}
+.btn-ghost{border:1px solid rgba(255,255,255,.3);color:#EDEFF3;font-family:'Chakra Petch',sans-serif;font-size:14px;letter-spacing:.12em;padding:14px 26px;display:inline-block}
+.btn-ghost:hover{border-color:#FDB913;color:#FDB913}
+.wrap{max-width:1240px;margin:0 auto;padding:0 40px}
+.kicker{display:flex;align-items:center;gap:10px;font-family:'Chakra Petch',sans-serif;font-size:12px;letter-spacing:.28em;color:#FDB913;margin-bottom:12px}
+.kicker::before{content:"";width:28px;height:2px;background:#FDB913}
+h1.page{margin:0 0 10px;font-family:'Chakra Petch',sans-serif;font-weight:700;font-size:44px;letter-spacing:.01em;text-transform:uppercase}
+.lede{margin:0;color:#8B93A3;font-size:16px;max-width:560px;text-wrap:pretty}
+h2.sec{margin:0;font-family:'Chakra Petch',sans-serif;font-size:28px;letter-spacing:.04em;text-transform:uppercase}
+.sechead{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:28px}
+.sechead a{font-family:'Chakra Petch',sans-serif;font-size:13px;letter-spacing:.12em}
+.card{background:#141821;border:1px solid rgba(255,255,255,.08)}
+.ph{position:absolute;inset:0;background:linear-gradient(135deg,#151A24,#10141C);display:flex;align-items:center;justify-content:center;color:#4A5364;font-family:'Chakra Petch',sans-serif;font-size:12px;letter-spacing:.1em;text-align:center;padding:12px}
+footer{border-top:1px solid rgba(255,255,255,.08);padding:32px 40px;display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;font-size:13px;color:#8B93A3}
+@keyframes tickerScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+/* home */
+.hero{position:relative;min-height:560px;display:flex;overflow:hidden}
+.hero-bg{position:absolute;inset:0}
+.hero-scrim{position:absolute;inset:0;background:linear-gradient(100deg,rgba(11,13,18,.95) 25%,rgba(11,13,18,.55) 60%,rgba(200,16,46,.25))}
+.hero-content{position:relative;display:flex;flex-direction:column;justify-content:center;gap:18px;padding:72px 40px 96px;max-width:720px}
+.hero h1{margin:0;font-family:'Chakra Petch',sans-serif;font-weight:700;font-size:58px;line-height:1.02;text-transform:uppercase;text-wrap:balance}
+.hero h1 span{color:#C8102E}
+.hero p{margin:0;font-size:17px;line-height:1.55;color:#C9CFDA;max-width:520px}
+.count{display:flex;gap:12px;margin-top:14px;font-family:'Chakra Petch',sans-serif}
+.count div{background:rgba(20,23,31,.85);border:1px solid rgba(255,255,255,.1);padding:10px 14px;min-width:64px;text-align:center}
+.count b{display:block;font-size:26px;font-weight:700;color:#FDB913}
+.count small{font-size:10px;letter-spacing:.2em;color:#8B93A3}
+.ticker{overflow:hidden;background:#C8102E;padding:9px 0;white-space:nowrap}
+.ticker>div{display:inline-flex;gap:48px;animation:tickerScroll 28s linear infinite;font-family:'Chakra Petch',sans-serif;font-size:13px;letter-spacing:.14em;color:#fff}
+.ticker span.d{color:#FDB913}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.match-card{border-top:3px solid #C8102E;padding:22px 24px;display:flex;flex-direction:column;gap:14px}
+.match-card .meta{display:flex;justify-content:space-between;font-family:'Chakra Petch',sans-serif;font-size:12px;letter-spacing:.16em}
+.match-card .meta .g{color:#FDB913}.match-card .meta .s{color:#8B93A3}
+.match-card .teams{display:flex;align-items:center;justify-content:space-between;gap:10px;font-family:'Chakra Petch',sans-serif;font-weight:600;font-size:18px}
+.match-card .teams .vs{color:#C8102E;font-weight:700;font-size:14px}
+.match-card .foot{display:flex;justify-content:space-between;font-size:13px;color:#8B93A3;border-top:1px solid rgba(255,255,255,.07);padding-top:12px}
+.games{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
+.game{position:relative;height:190px;overflow:hidden;background:#141821;border:1px solid rgba(255,255,255,.08)}
+.game .label{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(transparent,rgba(11,13,18,.95) 75%);padding:36px 12px 12px;font-family:'Chakra Petch',sans-serif;font-weight:600;font-size:13px;letter-spacing:.06em;text-align:center;z-index:1}
+.news-item{display:flex;gap:18px;align-items:baseline;padding:18px 22px;color:#EDEFF3}
+.news-item:hover{border-color:rgba(253,185,19,.5);color:#EDEFF3}
+.news-item .d{font-family:'Chakra Petch',sans-serif;font-size:12px;letter-spacing:.1em;color:#FDB913;white-space:nowrap}
+.news-item b{font-weight:600;font-size:16px;display:block}
+.news-item small{font-size:13px;color:#8B93A3}
+.play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:1}
+.play span{width:64px;height:64px;border-radius:50%;background:rgba(200,16,46,.92);display:flex;align-items:center;justify-content:center;color:#fff;font-size:22px;padding-left:5px}
+/* matches */
+.tabs{display:flex;gap:8px;margin-top:32px;border-bottom:1px solid rgba(255,255,255,.1)}
+.tabs button{background:transparent;border:none;cursor:pointer;color:#8B93A3;font-family:'Chakra Petch',sans-serif;font-weight:600;font-size:14px;letter-spacing:.12em;padding:13px 24px;border-bottom:3px solid transparent}
+.tabs button.active{background:#141821;color:#FDB913;border-bottom-color:#C8102E}
+.tabpane{display:none}.tabpane.active{display:block}
+.sched{display:grid;grid-template-columns:150px 1fr 170px 130px;gap:20px;align-items:center;border-left:3px solid #C8102E;padding:18px 24px;margin-bottom:12px}
+.sched .g{font-family:'Chakra Petch',sans-serif;font-size:12px;letter-spacing:.14em;color:#FDB913;display:block}
+.sched .st{font-size:12px;color:#8B93A3}
+.sched .teams{display:flex;align-items:center;gap:14px;font-family:'Chakra Petch',sans-serif;font-weight:600;font-size:17px}
+.sched .vs{color:#C8102E;font-size:13px}
+.sched .when{font-size:14px;color:#C9CFDA}.sched .where{font-size:13px;color:#8B93A3;text-align:right}
+.res{display:grid;grid-template-columns:150px 1fr 130px;gap:20px;align-items:center;padding:18px 24px;margin-bottom:12px}
+.res .teams{display:flex;align-items:center;gap:14px;font-family:'Chakra Petch',sans-serif;font-weight:600;font-size:17px}
+.res .score{background:#0B0D12;border:1px solid rgba(255,255,255,.12);padding:5px 14px;font-size:16px;color:#FDB913}
+.res .lose{color:#697184}
+.res .fin{font-size:12px;letter-spacing:.12em;color:#8B93A3;text-align:right;font-family:'Chakra Petch',sans-serif}
+.bracket{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(220px,1fr);gap:32px;align-items:center;overflow-x:auto;padding-bottom:8px}
+.bcol{display:flex;flex-direction:column;gap:18px}.bcol.semi{gap:64px}
+.bcol .bhead{font-size:11px;letter-spacing:.18em;color:#8B93A3;text-align:center}
+.bracket .bcol:nth-last-child(2) .bmatch{border-color:rgba(253,185,19,.35)}
+.bfinal .lose{color:#697184}
+.bmatch div{display:flex;justify-content:space-between;padding:10px 14px;font-weight:600;font-size:14px}
+.bmatch div+div{border-top:1px solid rgba(255,255,255,.07)}
+.bmatch .lose{color:#697184}
+.bfinal{background:linear-gradient(135deg,#1A1420,#141821);border:1px solid #C8102E;box-shadow:0 0 32px rgba(200,16,46,.25)}
+.bfinal .h{padding:10px 14px;font-family:'Chakra Petch',sans-serif;font-size:11px;letter-spacing:.2em;color:#FDB913;border-bottom:1px solid rgba(255,255,255,.07);display:block}
+.bfinal div{display:flex;justify-content:space-between;padding:12px 14px;font-weight:600;font-size:15px}
+.bfinal div+div{border-top:1px solid rgba(255,255,255,.07)}
+.bfinal .tbd{color:#8B93A3}
+.standings .row{display:grid;grid-template-columns:60px 1fr 90px 90px 90px 110px;padding:14px 24px;border-bottom:1px solid rgba(255,255,255,.05);font-size:15px}
+.standings .head{font-family:'Chakra Petch',sans-serif;font-size:11px;letter-spacing:.18em;color:#8B93A3;border-bottom:1px solid rgba(255,255,255,.1)}
+.standings .q{background:rgba(253,185,19,.05)}
+.standings .rank{font-family:'Chakra Petch',sans-serif;font-weight:700;color:#8B93A3}
+.standings .q .rank{color:#FDB913}
+.standings .w{text-align:center;color:#7BC47F}.standings .l{text-align:center;color:#C9CFDA}
+.standings .diff{text-align:center;color:#8B93A3}
+.standings .pts{text-align:right;font-family:'Chakra Petch',sans-serif;font-weight:700;color:#FDB913}
+.register{margin:0 auto 64px;max-width:1160px;background:linear-gradient(100deg,#1A0E14,#141821);border:1px solid rgba(200,16,46,.5);padding:40px;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap}
+.register h2{margin:0 0 6px;font-family:'Chakra Petch',sans-serif;font-size:26px;letter-spacing:.03em;text-transform:uppercase}
+.register p{margin:0;color:#8B93A3;font-size:15px}
+/* videos */
+.vfeat{display:grid;grid-template-columns:1.5fr 1fr;overflow:hidden;color:#EDEFF3}
+.vfeat:hover{border-color:rgba(200,16,46,.6);color:#EDEFF3}
+.vfeat .thumb{position:relative;min-height:340px}
+.vfeat .info{padding:36px;display:flex;flex-direction:column;justify-content:center;gap:12px}
+.vtag{font-family:'Chakra Petch',sans-serif;font-size:12px;letter-spacing:.16em;color:#FDB913}
+.badge{position:absolute;top:16px;left:16px;background:#C8102E;color:#fff;font-family:'Chakra Petch',sans-serif;font-size:11px;letter-spacing:.18em;padding:6px 12px;z-index:1}
+.vcard{display:flex;flex-direction:column;overflow:hidden;color:#EDEFF3}
+.vcard:hover{border-color:rgba(200,16,46,.6);color:#EDEFF3}
+.vcard .thumb{position:relative;height:190px}
+.vcard .thumb .play span{width:50px;height:50px;font-size:17px;padding-left:4px}
+.vcard .dur{position:absolute;bottom:10px;right:10px;background:rgba(11,13,18,.85);font-size:12px;padding:3px 8px;z-index:1}
+.vcard .info{padding:18px 20px;display:flex;flex-direction:column;gap:6px}
+.vcard b{font-weight:600;font-size:16px;line-height:1.3}
+.vcard small{font-size:13px;color:#8B93A3}
+/* photos */
+.gallery{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:180px;gap:14px}
+.tile{position:relative;overflow:hidden}
+.tile .cap{position:absolute;left:0;bottom:0;right:0;padding:24px 14px 10px;background:linear-gradient(transparent,rgba(11,13,18,.6) 80%);display:flex;justify-content:space-between;align-items:baseline;gap:8px;z-index:1}
+.tile .cap b{font-family:'Chakra Petch',sans-serif;font-size:12px;letter-spacing:.1em;font-weight:400;color:#EDEFF3}
+.tile .cap small{font-size:11px;color:#8B93A3}
+.tile img,.game img,.thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+/* news */
+.pinned{background:linear-gradient(100deg,#1A0E14,#141821);border:1px solid rgba(200,16,46,.6);padding:30px 32px}
+.pin-badge{background:#C8102E;color:#fff;font-family:'Chakra Petch',sans-serif;font-size:10px;letter-spacing:.2em;padding:5px 10px}
+.post{padding:26px 32px}
+.post h2,.pinned h2{margin:0 0 8px;font-family:'Chakra Petch',sans-serif;font-size:20px;letter-spacing:.02em}
+.pinned h2{font-size:24px}
+.post .meta,.pinned .meta{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.post .meta .tag{font-family:'Chakra Petch',sans-serif;font-size:11px;letter-spacing:.16em;color:#FDB913}
+.post .meta small,.pinned .meta small{font-size:12px;color:#8B93A3}
+.pinned .meta .d{font-family:'Chakra Petch',sans-serif;font-size:12px;letter-spacing:.12em;color:#FDB913}
+.post p,.pinned p{margin:0;color:#8B93A3;font-size:15px;line-height:1.6;max-width:680px;text-wrap:pretty}
+.pinned p{color:#C9CFDA;margin-bottom:16px}
+/* chat */
+.chat-shell{overflow:hidden}
+.chat-top{display:flex;align-items:center;justify-content:space-between;gap:16px;border-bottom:1px solid rgba(255,255,255,.1);padding:0 18px;flex-wrap:wrap}
+.chat-user{display:flex;align-items:center;gap:14px;font-size:13px;color:#8B93A3}
+.ctab{display:none}.ctab.active{display:block}
+.msg-list{height:440px;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:10px}
+.msg{max-width:70%;padding:10px 14px;background:#0E1117;border:1px solid rgba(255,255,255,.1);align-self:flex-start}
+.msg.mine{align-self:flex-end;border-color:rgba(200,16,46,.5);background:#1A0E14}
+.msg .who{font-family:'Chakra Petch',sans-serif;font-size:11px;letter-spacing:.1em;color:#FDB913;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.msg .who small{color:#697184;letter-spacing:0;font-family:Barlow,sans-serif}
+.msg .txt{font-size:14.5px;line-height:1.45;margin-top:3px;overflow-wrap:anywhere}
+.msg .del{background:none;border:none;color:#697184;cursor:pointer;font-size:11px;padding:0;font-family:Barlow,sans-serif}
+.msg .del:hover{color:#E31837}
+.msg-form{display:flex;gap:10px;padding:14px 18px;border-top:1px solid rgba(255,255,255,.1)}
+.msg-form input{flex:1;background:#0B0D12;border:1px solid rgba(255,255,255,.14);color:#EDEFF3;padding:11px 12px;font-family:Barlow,sans-serif;font-size:14px}
+.msg-form input:focus{outline:none;border-color:rgba(253,185,19,.6)}
+.msg-form .btn{border:none;cursor:pointer}
+.inbox-grid{display:grid;grid-template-columns:300px 1fr;min-height:520px}
+.threads{border-right:1px solid rgba(255,255,255,.1);display:flex;flex-direction:column}
+#new-thread{display:flex;gap:8px;padding:14px;border-bottom:1px solid rgba(255,255,255,.08)}
+#new-thread input{flex:1;min-width:0;background:#0B0D12;border:1px solid rgba(255,255,255,.14);color:#EDEFF3;padding:9px 10px;font-size:13px;font-family:Barlow,sans-serif}
+.thread-item{padding:13px 16px;border-bottom:1px solid rgba(255,255,255,.06);cursor:pointer;border-left:3px solid transparent}
+.thread-item:hover{background:rgba(255,255,255,.03)}
+.thread-item.active{background:#0E1117;border-left-color:#C8102E}
+.thread-item b{font-size:14px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.thread-item small{color:#8B93A3;font-size:12px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:2px}
+.dm-head{padding:14px 18px;border-bottom:1px solid rgba(255,255,255,.1);font-family:'Chakra Petch',sans-serif;font-size:13px;letter-spacing:.1em;color:#FDB913}
+.chat-err{background:rgba(200,16,46,.12);border:1px solid rgba(200,16,46,.5);color:#FF8B9E;font-size:13.5px;padding:10px 14px}
+.chat-note{color:#8B93A3;font-size:14px;padding:22px}
+.signin-card{max-width:420px;padding:32px;display:flex;flex-direction:column;gap:14px}
+.signin-card input{background:#0B0D12;border:1px solid rgba(255,255,255,.14);color:#EDEFF3;padding:11px 12px;font-size:14px;width:100%;font-family:Barlow,sans-serif}
+.signin-card input:focus{outline:none;border-color:rgba(253,185,19,.6)}
+.signin-card .or{display:flex;align-items:center;gap:12px;color:#697184;font-size:11px;letter-spacing:.2em;font-family:'Chakra Petch',sans-serif}
+.signin-card .or::before,.signin-card .or::after{content:"";height:1px;background:rgba(255,255,255,.12);flex:1}
+.linkbtn{background:none;border:none;color:#FDB913;cursor:pointer;font-size:13px;padding:0;font-family:Barlow,sans-serif}
+.linkbtn:hover{color:#FFD25E;text-decoration:underline}
+@media (max-width:800px){.inbox-grid{grid-template-columns:1fr}.threads{border-right:none;border-bottom:1px solid rgba(255,255,255,.1)}.msg{max-width:90%}}
