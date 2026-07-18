@@ -59,15 +59,27 @@ async function storeImage(file) {
   toast('Uploading image…');
   const blob = await (await fetch(data)).blob();
   const url = await store.uploadFile('images', blob, (file.name || 'photo') + '.jpg');
-  toast('Image uploaded.');
+  toast('Image uploaded — now press SAVE.');
   return url;
 }
+
+// Block every save while an upload is still writing its URL into the form,
+// so an entry can't be saved with a half-finished image/video field.
+let uploadsActive = 0;
+document.addEventListener('submit', e => {
+  if (uploadsActive > 0) {
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    toast('Still uploading — wait for "uploaded" to appear, then save again.');
+  }
+}, true);
 
 // file inputs write their upload's value into the input named by data-target
 document.addEventListener('change', async e => {
   const f = e.target;
   if (!f.matches('input[type="file"]') || !f.files || !f.files[0]) return;
   const file = f.files[0];
+  uploadsActive++;
   try {
     if (f.dataset.upload === 'videos') {
       if (store.mode !== 'firebase') throw new Error('Video uploads need live Firebase mode.');
@@ -90,6 +102,7 @@ document.addEventListener('change', async e => {
   } catch (err) {
     toast(err.message);
   } finally {
+    uploadsActive--;
     f.value = '';
   }
 });
@@ -763,6 +776,7 @@ $('form-photo').addEventListener('submit', async e => {
   try {
     const id = $('p-id').value;
     const obj = collectPhotoForm();
+    if (!obj.image) { toast('Add the picture first: IMAGE → UPLOAD, wait for "Image uploaded", then save.'); return; }
     if (id) await store.update('photos', id, obj);
     else await store.add('photos', obj);
     resetPhotoForm();
