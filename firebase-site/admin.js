@@ -243,6 +243,9 @@ async function refreshHome() {
   setImgField('h-image', home.heroImage);
   $('h-cd-on').checked = home.countdownEnabled !== false;
   $('h-cd-target').value = (home.countdownTarget || '').slice(0, 16);
+  $('h-live-on').checked = home.liveOn === true;
+  $('h-live-url').value = home.liveUrl || '';
+  $('h-live-title').value = home.liveTitle || '';
   $('games-list').innerHTML = (home.games || []).map(gameRowHTML).join('');
 }
 
@@ -255,6 +258,9 @@ function collectHomeForm() {
     heroImage: $('h-image').value.trim(),
     countdownEnabled: $('h-cd-on').checked,
     countdownTarget: $('h-cd-target').value,
+    liveOn: $('h-live-on').checked,
+    liveUrl: $('h-live-url').value.trim(),
+    liveTitle: $('h-live-title').value.trim(),
     games: [...document.querySelectorAll('#games-list .game-row')]
       .map(r => ({ name: r.querySelector('.gname').value.trim(), image: r.querySelector('.gimg').value.trim() }))
       .filter(g => g.name)
@@ -264,7 +270,9 @@ function collectHomeForm() {
 $('form-home').addEventListener('submit', async e => {
   e.preventDefault();
   try {
-    await store.saveSetting('home', collectHomeForm());
+    const obj = collectHomeForm();
+    if (obj.liveOn && !obj.liveUrl) { toast('Paste the Facebook video link first, or untick "WE\'RE LIVE".'); return; }
+    await store.saveSetting('home', obj);
     toast('Home page saved.');
   } catch (err) { toast(err.message); }
 });

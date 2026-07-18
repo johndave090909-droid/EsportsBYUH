@@ -130,6 +130,24 @@ async function renderHome(site) {
   }
   if (site && site.registerUrl) { const cta = $('hero-cta'); if (cta) cta.href = site.registerUrl; }
 
+  // Facebook Live embed: appears only while an officer has it switched on.
+  const liveSec = $('live-sec');
+  if (liveSec) {
+    const h = home || {};
+    const liveUrl = String(h.liveUrl || '').trim();
+    const fr = $('live-frame');
+    if (h.liveOn && liveUrl) {
+      setText('live-title', h.liveTitle || "We're live on Facebook");
+      const fbl = $('live-fb-link'); if (fbl) fbl.href = liveUrl;
+      const src = 'https://www.facebook.com/plugins/video.php?href=' + encodeURIComponent(liveUrl) + '&show_text=false&autoplay=1';
+      if (fr && fr.getAttribute('data-src') !== src) { fr.src = src; fr.setAttribute('data-src', src); }
+      liveSec.hidden = false;
+    } else {
+      liveSec.hidden = true;
+      if (fr) { fr.removeAttribute('src'); fr.removeAttribute('data-src'); }
+    }
+  }
+
   const matches = (await listData('matches'))
     .filter(m => m.status !== 'final').sort(byDT).slice(0, 3);
   const mEl = $('home-matches');
