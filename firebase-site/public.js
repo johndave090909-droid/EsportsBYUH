@@ -445,6 +445,39 @@ async function renderVideos(site) {
   }
 }
 
+/* ---------- image lightbox ---------- */
+// Tap a gallery photo or a champion card's picture to view it full-screen;
+// tap anywhere (or press Esc) to close.
+
+const lightbox = document.createElement('div');
+lightbox.id = 'lightbox';
+lightbox.hidden = true;
+lightbox.innerHTML = '<button id="lb-close" aria-label="Close">✕</button><img alt=""><div id="lb-cap"></div>';
+document.body.appendChild(lightbox);
+
+function openLightbox(src, cap) {
+  lightbox.querySelector('img').src = src;
+  $('lb-cap').textContent = cap || '';
+  lightbox.hidden = false;
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox() {
+  lightbox.hidden = true;
+  lightbox.querySelector('img').removeAttribute('src');
+  document.body.style.overflow = '';
+}
+lightbox.addEventListener('click', closeLightbox);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
+document.addEventListener('click', e => {
+  const img = e.target.closest('.tile img, .champ-card img');
+  if (!img) return;
+  const tile = img.closest('.tile');
+  const champ = img.closest('.champ-card');
+  const capEl = tile ? tile.querySelector('.cap b') : champ ? champ.querySelector('.cname') : null;
+  openLightbox(img.src, capEl ? capEl.textContent : '');
+});
+
 /* ---------- boot ---------- */
 
 const heroBgInit = document.getElementById('hero-bg') ? document.getElementById('hero-bg').innerHTML : '';

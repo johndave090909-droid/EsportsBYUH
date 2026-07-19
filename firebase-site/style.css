@@ -202,6 +202,15 @@ footer{margin-top:auto;border-top:1px solid rgba(255,255,255,.08);padding:32px 4
 .linkbtn:hover{color:#FFD25E;text-decoration:underline}
 @media (max-width:800px){.inbox-grid{grid-template-columns:1fr}.threads{border-right:none;border-bottom:1px solid rgba(255,255,255,.1)}.msg{max-width:90%}}
 
+/* image lightbox */
+.tile img,.champ-card img{cursor:zoom-in}
+#lightbox{position:fixed;inset:0;z-index:80;background:rgba(7,9,13,.94);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px;cursor:zoom-out}
+#lightbox[hidden]{display:none}
+#lightbox img{max-width:94vw;max-height:82vh;object-fit:contain;border:1px solid rgba(255,255,255,.15);box-shadow:0 20px 80px rgba(0,0,0,.7)}
+#lb-cap{font-family:'Chakra Petch',sans-serif;font-size:13px;letter-spacing:.12em;color:#FDB913;text-align:center;max-width:94vw}
+#lb-close{position:absolute;top:12px;right:14px;background:none;border:none;color:#C9CFDA;font-size:26px;cursor:pointer;padding:10px;line-height:1}
+#lb-close:hover{color:#fff}
+
 /* ---- mobile (phones & small tablets) ---- */
 @media (max-width:900px){
   .wrap{padding:0 20px}
