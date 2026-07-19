@@ -58,6 +58,7 @@ footer{margin-top:auto;border-top:1px solid rgba(255,255,255,.08);padding:32px 4
 .games{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
 .game{position:relative;height:190px;overflow:hidden;background:#141821;border:1px solid rgba(255,255,255,.08)}
 .game .label{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(transparent,rgba(11,13,18,.95) 75%);padding:36px 12px 12px;font-family:'Chakra Petch',sans-serif;font-weight:600;font-size:13px;letter-spacing:.06em;text-align:center;z-index:1}
+.two-col{display:grid;grid-template-columns:1.2fr 1fr;gap:40px}
 .news-item{display:flex;gap:18px;align-items:baseline;padding:18px 22px;color:#EDEFF3}
 .news-item:hover{border-color:rgba(253,185,19,.5);color:#EDEFF3}
 .news-item .d{font-family:'Chakra Petch',sans-serif;font-size:12px;letter-spacing:.1em;color:#FDB913;white-space:nowrap}
@@ -102,7 +103,7 @@ footer{margin-top:auto;border-top:1px solid rgba(255,255,255,.08);padding:32px 4
 .standings .w{text-align:center;color:#7BC47F}.standings .l{text-align:center;color:#C9CFDA}
 .standings .diff{text-align:center;color:#8B93A3}
 .standings .pts{text-align:right;font-family:'Chakra Petch',sans-serif;font-weight:700;color:#FDB913}
-.register{margin:0 auto 64px;max-width:1160px;background:linear-gradient(100deg,#1A0E14,#141821);border:1px solid rgba(200,16,46,.5);padding:40px;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap}
+.register{margin:0 auto 64px;width:calc(100% - 80px);max-width:1160px;background:linear-gradient(100deg,#1A0E14,#141821);border:1px solid rgba(200,16,46,.5);padding:40px;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap}
 .register h2{margin:0 0 6px;font-family:'Chakra Petch',sans-serif;font-size:26px;letter-spacing:.03em;text-transform:uppercase}
 .register p{margin:0;color:#8B93A3;font-size:15px}
 /* videos */
@@ -200,3 +201,48 @@ footer{margin-top:auto;border-top:1px solid rgba(255,255,255,.08);padding:32px 4
 .linkbtn{background:none;border:none;color:#FDB913;cursor:pointer;font-size:13px;padding:0;font-family:Barlow,sans-serif}
 .linkbtn:hover{color:#FFD25E;text-decoration:underline}
 @media (max-width:800px){.inbox-grid{grid-template-columns:1fr}.threads{border-right:none;border-bottom:1px solid rgba(255,255,255,.1)}.msg{max-width:90%}}
+
+/* ---- mobile (phones & small tablets) ---- */
+@media (max-width:900px){
+  .wrap{padding:0 20px}
+  header{padding:12px 16px;gap:10px 16px;flex-wrap:wrap}
+  header .btn{padding:9px 14px;font-size:12px}
+  nav{order:3;width:100%;justify-content:flex-start;gap:22px;overflow-x:auto;scrollbar-width:none}
+  nav::-webkit-scrollbar{display:none}
+  h1.page{font-size:32px}
+  h2.sec{font-size:22px}
+  .sechead{flex-wrap:wrap;gap:8px 16px}
+  .lede{font-size:15px}
+  .hero{min-height:0}
+  .hero-content{padding:52px 20px 60px;gap:14px}
+  .hero h1{font-size:36px}
+  .hero p{font-size:15px}
+  .count{flex-wrap:wrap;gap:10px}
+  .count div{min-width:58px;padding:8px 10px}
+  .count b{font-size:20px}
+  .grid3{grid-template-columns:1fr}
+  .games{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
+  .game{height:150px}
+  .two-col{grid-template-columns:1fr;gap:48px}
+  .tabs{overflow-x:auto;scrollbar-width:none;gap:2px}
+  .tabs::-webkit-scrollbar{display:none}
+  .tabs button{padding:12px 14px;font-size:12.5px;white-space:nowrap}
+  .sched{grid-template-columns:1fr;gap:8px;padding:16px 18px}
+  .sched .where{text-align:left}
+  .sched .teams,.res .teams{flex-wrap:wrap;row-gap:4px}
+  .res{grid-template-columns:1fr;gap:10px;padding:16px 18px}
+  .res .fin{text-align:left}
+  .standings .row{grid-template-columns:32px 1fr 40px 40px 56px 58px;padding:12px 10px;font-size:13px}
+  .standings .head{font-size:9.5px;letter-spacing:.1em}
+  .register{width:calc(100% - 32px);padding:26px 22px}
+  .register h2{font-size:21px}
+  .champ-card .cname{font-size:22px}
+  .vfeat{grid-template-columns:1fr}
+  .vfeat .thumb{min-height:220px}
+  .vfeat .info{padding:24px 20px}
+  .gallery{grid-template-columns:repeat(2,1fr);grid-auto-rows:150px}
+  .pinned,.post{padding:22px 18px}
+  #news-head{padding:44px 20px 8px !important}
+  #news-list{padding:28px 20px !important}
+  footer{padding:24px 20px}
+}
