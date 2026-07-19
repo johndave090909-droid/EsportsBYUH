@@ -9,7 +9,7 @@ export const FRESH = {
     ticker: [],
     facebookUrl: "https://www.facebook.com/",
     discordUrl: "#",
-    registerUrl: "matches.html#register",
+    registerUrl: "/matches#register",
     footerText: "SEASIDER ESPORTS · BYU–Hawaii Esports Club · Laie, HI"
   },
   home: {
@@ -58,7 +58,7 @@ export const SEED = {
       ],
       facebookUrl: "https://www.facebook.com/",
       discordUrl: "#",
-      registerUrl: "matches.html#register",
+      registerUrl: "/matches#register",
       footerText: "SEASIDER ESPORTS · BYU–Hawaii Esports Club · Laie, HI"
     },
     home: {
@@ -112,7 +112,7 @@ export const SEED = {
   matches: [],
 
   news: [
-    { id: "n1", title: "Spring Invitational registration is open", tag: "TOURNAMENT", date: "2026-08-14", pinned: true, linkText: "REGISTER NOW", linkUrl: "matches.html#register",
+    { id: "n1", title: "Spring Invitational registration is open", tag: "TOURNAMENT", date: "2026-08-14", pinned: true, linkText: "REGISTER NOW", linkUrl: "/matches#register",
       body: "The Seasider Cup Spring Invitational runs Aug 21–28 across all six club titles. Free for all BYU–Hawaii students — enter as a full team or sign up solo and we'll place you. Registration closes Aug 20 at midnight." },
     { id: "n2", title: "New practice room hours in GCB", tag: "FACILITIES", date: "2026-08-10", pinned: false, linkText: "", linkUrl: "",
       body: "The LAN room in GCB is now open Mon–Fri, 4–10 PM for club members. Twelve PCs, two console stations, and a booking sheet on the door — first come, first served during open hours." },

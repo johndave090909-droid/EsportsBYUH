@@ -1,6 +1,6 @@
 # Seasider Esports — Officer Admin Panel
 
-The site now has an admin panel at **`/admin.html`** (there's also an "Officer Login"
+The site now has an admin panel at **`/admin`** (there's also an "Officer Login"
 link in every page footer). Officers sign in and manage everything on the site:
 
 | Panel section  | What it controls |
@@ -24,7 +24,7 @@ automatically from the Matches, News, and Videos data.
 
 Until Firebase is configured, the panel runs in **demo mode**:
 
-- Sign in at `/admin.html` with **officer@byuh.edu** / **seasiders**
+- Sign in at `/admin` with **officer@byuh.edu** / **seasiders**
 - All content and officer accounts are stored **in that browser only**
   (localStorage). Open the public pages in the same browser to see your edits.
 - "Reset everything" in Site Settings → Data Tools restores the defaults.
@@ -53,7 +53,7 @@ shared between computers, and demo passwords are not real security.
    contents with the contents of **`firestore.rules`** (in this folder) →
    Publish. These rules make content publicly readable but only writable by
    people on the officer list.
-7. **Sign in:** open `/admin.html` → press **Continue with Google** with the
+7. **Sign in:** open `/admin` → press **Continue with Google** with the
    account from step 5. (No Google account? In the Firebase console go to
    Authentication → Users → **Add user** with that email and a password —
    there is deliberately no self-signup on the login screen.) Use Site
@@ -76,7 +76,7 @@ firebase deploy           # deploys hosting + firestore rules
 ```
 
 Your site goes live at `https://<project-id>.web.app`, admin panel at
-`/admin.html`, and every officer edit is instantly visible to everyone.
+`/admin`, and every officer edit is instantly visible to everyone.
 
 ## Notes & limits
 
@@ -86,7 +86,7 @@ Your site goes live at `https://<project-id>.web.app`, admin panel at
   panel warns you if an upload is still too large. If the club ever wants
   full-resolution albums, that's what Firebase Storage is for (paid plan on
   new projects); linking a Facebook album is the free alternative.
-- **admin.html is only a door, not the lock.** In live mode the real
+- **The /admin page is only a door, not the lock.** In live mode the real
   protection is the Firestore rules: even someone who opens the admin page
   cannot write anything unless their signed-in email is in `officers`.
 - The original static content of each page remains in the HTML as a fallback

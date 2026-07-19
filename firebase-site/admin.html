@@ -16,7 +16,7 @@
 <!-- ============ LOGIN ============ -->
 <div id="login-view" class="login-wrap" hidden>
   <div class="login-card">
-    <a class="logo" href="index.html" style="justify-content:center">
+    <a class="logo" href="/home" style="justify-content:center">
       <span class="logo-mark">S</span>
       <span class="logo-text"><b>SEASIDER ESPORTS</b><small>OFFICER PANEL</small></span>
     </a>
@@ -35,14 +35,14 @@
     <div id="live-extra" style="text-align:center;font-size:13px;color:#8B93A3" hidden>
       <button type="button" class="linklike" id="btn-forgot">Forgot password</button>
     </div>
-    <a class="backlink" href="index.html">← Back to site</a>
+    <a class="backlink" href="/home">← Back to site</a>
   </div>
 </div>
 
 <!-- ============ APP ============ -->
 <div id="app-view" hidden>
   <aside>
-    <a class="logo" href="index.html">
+    <a class="logo" href="/home">
       <span class="logo-mark">S</span>
       <span class="logo-text"><b>SEASIDER ESPORTS</b><small>OFFICER PANEL</small></span>
     </a>
@@ -58,7 +58,7 @@
       <button data-sec="officers">OFFICERS</button>
     </nav>
     <div class="side-foot">
-      <a href="index.html" target="_blank">View site ↗</a>
+      <a href="/home" target="_blank">View site ↗</a>
       <div id="user-chip"></div>
       <button class="btn-sm" id="btn-logout">LOG OUT</button>
     </div>
@@ -149,7 +149,7 @@
           <label class="f chk"><input type="checkbox" id="n-pinned"> PIN THIS POST (UNPINS OTHERS)</label>
           <label class="f wide">BODY<textarea id="n-body" rows="4" required></textarea></label>
           <label class="f">LINK TEXT (PINNED POST ONLY)<input id="n-linktext" placeholder="e.g. REGISTER NOW"></label>
-          <label class="f">LINK URL<input id="n-linkurl" placeholder="e.g. matches.html#register"></label>
+          <label class="f">LINK URL<input id="n-linkurl" placeholder="e.g. /matches#register"></label>
         </div>
         <div class="actions">
           <button class="btn">SAVE POST</button>
@@ -272,7 +272,7 @@
         <span class="hint-inline">draft preview only — visitors see saved content; nothing goes live until you press save</span>
         <button type="button" class="btn-sm" id="preview-toggle">HIDE</button>
       </div>
-      <iframe id="preview-frame" src="index.html" title="Site preview"></iframe>
+      <iframe id="preview-frame" src="/home" title="Site preview"></iframe>
     </div>
 
   </main>

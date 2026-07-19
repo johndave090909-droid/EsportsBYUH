@@ -965,9 +965,9 @@ $('dm-form').addEventListener('submit', async e => {
 // — including unsaved edits — is streamed into it and rendered by public.js.
 
 const PREVIEW_PAGE = {
-  home: 'index.html', matches: 'matches.html', bracket: 'matches.html',
-  news: 'news.html', photos: 'photos.html',
-  videos: 'videos.html', site: 'index.html', officers: 'index.html'
+  home: '/home', matches: '/matches', bracket: '/matches',
+  news: '/news', photos: '/photos',
+  videos: '/videos', site: '/home', officers: '/home'
 };
 const NO_PREVIEW = { officers: true };
 const PREVIEW_TAB = { matches: 'schedule', bracket: 'bracket' };
@@ -981,7 +981,7 @@ function updatePreviewTarget() {
   if (!wrap) return;
   wrap.style.display = NO_PREVIEW[activeSec] ? 'none' : '';
   const frame = $('preview-frame');
-  const page = PREVIEW_PAGE[activeSec] || 'index.html';
+  const page = PREVIEW_PAGE[activeSec] || '/home';
   if (frame.getAttribute('src') !== page) frame.setAttribute('src', page); // its load event re-sends the preview
   else schedulePreview();
 }

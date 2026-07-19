@@ -1,7 +1,14 @@
 {
   "hosting": {
     "public": "firebase-site",
-    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "cleanUrls": true,
+    "trailingSlash": false,
+    "redirects": [
+      { "source": "/", "destination": "/home", "type": 301 },
+      { "source": "/index.html", "destination": "/home", "type": 301 },
+      { "source": "/index", "destination": "/home", "type": 301 }
+    ]
   },
   "firestore": {
     "rules": "firestore.rules"

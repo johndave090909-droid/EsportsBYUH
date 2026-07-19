@@ -168,7 +168,7 @@ async function renderHome(site) {
   if (nEl) {
     nEl.innerHTML = news.length ? news.map(n => {
       const teaser = (n.body || '').length > 110 ? n.body.slice(0, 110).trimEnd() + '…' : (n.body || '');
-      return `<a class="card news-item" href="news.html"><span class="d">${esc(fmtD(n.date).toUpperCase())}</span><span><b>${esc(n.title)}</b><small>${esc(teaser)}</small></span></a>`;
+      return `<a class="card news-item" href="/news"><span class="d">${esc(fmtD(n.date).toUpperCase())}</span><span><b>${esc(n.title)}</b><small>${esc(teaser)}</small></span></a>`;
     }).join('')
       : emptyMsg('No announcements yet.');
   }
@@ -178,13 +178,13 @@ async function renderHome(site) {
   if (vids.length) {
     const v = vids.find(v => v.featured) || vids[0];
     if (link) {
-      link.href = v.url || 'videos.html';
+      link.href = v.url || '/videos';
       link.innerHTML = `${phOr(v.thumb, v.title, 'Video thumbnail')}<div class="play"><span>▶</span></div>`;
     }
     setText('home-video-title', v.title);
     setText('home-video-sub', v.description || 'Watch on our Facebook page');
   } else {
-    if (link) { link.href = 'videos.html'; link.innerHTML = '<div class="ph">Videos coming soon</div>'; }
+    if (link) { link.href = '/videos'; link.innerHTML = '<div class="ph">Videos coming soon</div>'; }
     const t = $('home-video-title'); if (t) t.textContent = 'No videos yet';
     const s = $('home-video-sub'); if (s) s.textContent = 'Follow our Facebook page for streams and VODs';
   }
