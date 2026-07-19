@@ -181,13 +181,28 @@ async function renderHome(site) {
       : emptyMsg('No matches scheduled yet — check back soon.', true);
   }
 
+  const champsAll = (await listData('champions')).filter(c => c.champion).sort(byChampDate);
+
+  // Hero overlay: the single most recent champion across every game.
+  const hc = $('hero-champ');
+  if (hc) {
+    const latest = champsAll[0];
+    if (latest) {
+      $('hero-champ-name').textContent = latest.champion;
+      $('hero-champ-sub').textContent = [(latest.game || '').toUpperCase(), latest.dateLabel].filter(Boolean).join(' · ');
+      hc.hidden = false;
+    } else {
+      hc.hidden = true;
+    }
+  }
+
   // Reigning champions: the newest champion entry for each game.
   const champsSec = $('champs-sec');
   if (champsSec) {
     const newest = new Map();
-    for (const c of (await listData('champions')).sort(byChampDate)) {
+    for (const c of champsAll) {
       const key = (c.game || 'CLUB').trim().toUpperCase();
-      if (c.champion && !newest.has(key)) newest.set(key, c);
+      if (!newest.has(key)) newest.set(key, c);
     }
     const reigning = [...newest.values()];
     $('home-champs').innerHTML = reigning.map(champCardHTML).join('');

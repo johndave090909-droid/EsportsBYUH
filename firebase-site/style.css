@@ -139,6 +139,13 @@ footer{margin-top:auto;border-top:1px solid rgba(255,255,255,.08);padding:32px 4
 .pinned .meta .d{font-family:'Chakra Petch',sans-serif;font-size:12px;letter-spacing:.12em;color:#FDB913}
 .post p,.pinned p{margin:0;color:#8B93A3;font-size:15px;line-height:1.6;max-width:680px;text-wrap:pretty}
 .pinned p{color:#C9CFDA;margin-bottom:16px}
+/* newest-champion callout overlaid on the hero */
+.hero-champ{position:absolute;right:40px;bottom:36px;z-index:2;display:flex;flex-direction:column;gap:4px;padding:14px 18px 15px;background:rgba(11,13,18,.8);border:1px solid rgba(253,185,19,.5);backdrop-filter:blur(6px);max-width:330px;text-decoration:none}
+.hero-champ:hover{border-color:#FDB913;background:rgba(11,13,18,.92)}
+.hero-champ .hc-k{font-family:'Chakra Petch',sans-serif;font-size:10.5px;letter-spacing:.2em;color:#FDB913}
+.hero-champ b{font-family:'Chakra Petch',sans-serif;font-size:19px;color:#fff;text-transform:uppercase;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.hero-champ small{font-size:11.5px;color:#8B93A3;letter-spacing:.06em}
+@media (max-width:900px){.hero-champ{display:none}}
 /* champions — gold trophy plaques */
 .champs{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:22px}
 .champ-card{position:relative;overflow:hidden;border:1px solid rgba(253,185,19,.35);padding:24px 22px 20px;display:flex;flex-direction:column;gap:8px;background:linear-gradient(160deg,#201a0d 0%,#141821 55%)}
