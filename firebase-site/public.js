@@ -2,7 +2,7 @@
 // Every renderer is defensive: if the store has no data for a section (or
 // anything throws), the original static markup stays visible as fallback.
 
-import { store, normalizeBracket } from './data-store.js';
+import { store, normalizeBracket, bracketMatches, bracketStandings } from './data-store.js';
 import { FRESH } from './seed-data.js';
 
 // Draft data injected by the admin panel's live preview (see message listener
@@ -51,6 +51,8 @@ function phOr(image, alt, phLabel) {
 
 const byDT = (a, b) => String(a.datetime || '').localeCompare(String(b.datetime || ''));
 const byDTdesc = (a, b) => -byDT(a, b);
+// Soonest first, but matches without a date sink to the end instead of the top.
+const byDTLast = (a, b) => String(a.datetime || '9999').localeCompare(String(b.datetime || '9999'));
 const byDateDesc = (a, b) => String(b.date || '').localeCompare(String(a.date || ''));
 
 const GAME_STYLE = "font-family:'Chakra Petch',sans-serif;font-size:12px;letter-spacing:.14em;color:#FDB913;display:block";
@@ -148,15 +150,15 @@ async function renderHome(site) {
     }
   }
 
-  const matches = (await listData('matches'))
-    .filter(m => m.status !== 'final').sort(byDT).slice(0, 3);
+  const matches = bracketMatches(await setting('bracket'))
+    .filter(m => m.status !== 'final').sort(byDTLast).slice(0, 3);
   const mEl = $('home-matches');
   if (mEl) {
     mEl.innerHTML = matches.length ? matches.map(m => `
       <div class="card match-card">
         <div class="meta"><span class="g">${esc((m.game || '').toUpperCase())}</span><span class="s">${esc(m.stage)}</span></div>
         <div class="teams"><span>${esc(m.teamA)}</span><span class="vs">VS</span><span style="text-align:right">${esc(m.teamB)}</span></div>
-        <div class="foot"><span>${esc(fmtDT(m.datetime))}</span><span>${esc(m.location)}</span></div>
+        <div class="foot"><span>${esc(fmtDT(m.datetime) || 'Time TBA')}</span><span>${esc(m.location)}</span></div>
       </div>`).join('')
       : emptyMsg('No matches scheduled yet — check back soon.', true);
   }
@@ -236,14 +238,16 @@ async function renderMatchesPage(site) {
     }
   }
 
-  const all = await listData('matches');
-  const up = all.filter(m => m.status !== 'final').sort(byDT);
+  // Schedule, results, and standings are all read straight out of the bracket.
+  const br = normalizeBracket(await setting('bracket'));
+  const all = bracketMatches(br);
+  const up = all.filter(m => m.status !== 'final').sort(byDTLast);
   const fin = all.filter(m => m.status === 'final').sort(byDTdesc);
 
   const sEl = $('pane-schedule');
   if (sEl) {
     sEl.innerHTML = up.length ? up.map(m => `
-      <div class="card sched"><div><span class="g">${esc((m.game || '').toUpperCase())}</span><span class="st">${esc(m.stage)}</span></div><div class="teams"><span>${esc(m.teamA)}</span><span class="vs">VS</span><span>${esc(m.teamB)}</span></div><div class="when">${esc(fmtDT(m.datetime))}</div><div class="where">${esc(m.location)}</div></div>`).join('')
+      <div class="card sched"><div><span class="g">${esc((m.game || '').toUpperCase())}</span><span class="st">${esc(m.stage)}</span></div><div class="teams"><span>${esc(m.teamA)}</span><span class="vs">VS</span><span>${esc(m.teamB)}</span></div><div class="when">${esc(fmtDT(m.datetime) || 'Time TBA')}</div><div class="where">${esc(m.location)}</div></div>`).join('')
       : emptyMsg('No matches scheduled yet — check back soon.');
   }
 
@@ -256,7 +260,6 @@ async function renderMatchesPage(site) {
       : emptyMsg('No results yet.');
   }
 
-  const br = normalizeBracket(await setting('bracket'));
   const bEl = $('pane-bracket');
   if (bEl && br) {
     const rounds = (br.rounds || []).filter(r => (r.matches || []).length);
@@ -274,21 +277,19 @@ async function renderMatchesPage(site) {
     }
   }
 
-  const st = await setting('standings');
   const stEl = $('pane-standings');
-  if (stEl && st && Array.isArray(st.rows)) {
-    if (st.rows.length) {
-      const diffNum = r => parseInt(String(r.diff || '0').replace('−', '-').replace('+', ''), 10) || 0;
-      const rows = st.rows.slice().sort((a, b) => (b.pts - a.pts) || (diffNum(b) - diffNum(a)));
+  if (stEl) {
+    const rows = bracketStandings(br);
+    if (rows.length) {
       stEl.innerHTML = `
       <div class="card standings">
         <div class="row head"><span>#</span><span>TEAM</span><span style="text-align:center">W</span><span style="text-align:center">L</span><span style="text-align:center">MAP +/−</span><span style="text-align:right">POINTS</span></div>
         ${rows.map((r, i) => `
         <div class="row${r.q ? ' q' : ''}"><span class="rank">${i + 1}</span><span style="font-weight:600">${esc(r.team)}</span><span class="w">${esc(r.w)}</span><span class="l">${esc(r.l)}</span><span class="diff">${esc(r.diff)}</span><span class="pts">${esc(r.pts)}</span></div>`).join('')}
-        ${st.note ? `<div style="padding:12px 24px;font-size:12px;color:#8B93A3">${esc(st.note)}</div>` : ''}
+        ${br && br.note ? `<div style="padding:12px 24px;font-size:12px;color:#8B93A3">${esc(br.note)}</div>` : ''}
       </div>`;
     } else {
-      stEl.innerHTML = emptyMsg('Standings will appear once matches are played.');
+      stEl.innerHTML = emptyMsg('Standings will appear once the bracket has teams and scores.');
     }
   }
 }

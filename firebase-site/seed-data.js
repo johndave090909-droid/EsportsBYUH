@@ -38,12 +38,13 @@ export const FRESH = {
   },
   bracket: {
     title: "",
+    game: "",
+    note: "",
     rounds: [
       { name: "SEMIFINALS", matches: [{ a: "", as: "", b: "", bs: "" }, { a: "", as: "", b: "", bs: "" }] },
       { name: "GRAND FINAL", matches: [{ a: "", as: "", b: "", bs: "" }] }
     ]
-  },
-  standings: { note: "", rows: [] }
+  }
 };
 
 export const SEED = {
@@ -86,52 +87,29 @@ export const SEED = {
     },
     bracket: {
       title: "VALORANT — SPRING INVITATIONAL · 8 TEAMS · SINGLE ELIMINATION",
+      game: "VALORANT",
+      note: "3 points per win · Valorant division, Spring 2026",
       rounds: [
         { name: "QUARTERFINALS", matches: [
-          { a: "Reef Sharks", as: "2", b: "Coconut Clutch", bs: "0" },
-          { a: "Night Marchers", as: "2", b: "Island Kings", bs: "1" },
-          { a: "Tide Breakers", as: "2", b: "Mana Five", bs: "0" },
-          { a: "Lava Lions", as: "2", b: "Iosepa Five", bs: "1" }
+          { a: "Reef Sharks", as: "2", b: "Coconut Clutch", bs: "0", when: "2026-08-14T19:00", where: "GCB 101" },
+          { a: "Night Marchers", as: "2", b: "Island Kings", bs: "1", when: "2026-08-14T20:30", where: "GCB 101" },
+          { a: "Tide Breakers", as: "2", b: "Mana Five", bs: "0", when: "2026-08-15T19:00", where: "GCB 101" },
+          { a: "Lava Lions", as: "2", b: "Iosepa Five", bs: "1", when: "2026-08-15T20:30", where: "GCB 101" }
         ] },
         { name: "SEMIFINALS", matches: [
-          { a: "Reef Sharks", as: "", b: "Night Marchers", bs: "" },
-          { a: "Tide Breakers", as: "", b: "Lava Lions", bs: "" }
+          { a: "Reef Sharks", as: "", b: "Night Marchers", bs: "", when: "2026-08-21T19:00", where: "GCB 101" },
+          { a: "Tide Breakers", as: "", b: "Lava Lions", bs: "", when: "2026-08-21T20:30", where: "GCB 101" }
         ] },
-        { name: "GRAND FINAL · FRI AUG 28 · 7 PM", matches: [
-          { a: "Winner SF1", as: "", b: "Winner SF2", bs: "" }
+        { name: "GRAND FINAL", matches: [
+          { a: "", as: "", b: "", bs: "", when: "2026-08-28T19:00", where: "Aloha Center" }
         ] }
-      ]
-    },
-    standings: {
-      note: "Top 4 qualify for playoffs · Valorant division, Spring 2026",
-      rows: [
-        { team: "Reef Sharks", w: 6, l: 1, diff: "+9", pts: 18, q: true },
-        { team: "Night Marchers", w: 5, l: 2, diff: "+6", pts: 15, q: true },
-        { team: "Tide Breakers", w: 5, l: 2, diff: "+4", pts: 15, q: true },
-        { team: "Lava Lions", w: 4, l: 3, diff: "+1", pts: 12, q: true },
-        { team: "Iosepa Five", w: 3, l: 4, diff: "-2", pts: 9, q: false },
-        { team: "Island Kings", w: 2, l: 5, diff: "-5", pts: 6, q: false },
-        { team: "Coconut Clutch", w: 2, l: 5, diff: "-6", pts: 6, q: false },
-        { team: "Mana Five", w: 1, l: 6, diff: "-7", pts: 3, q: false }
       ]
     }
   },
 
-  matches: [
-    { id: "m1", game: "VALORANT", stage: "Semifinal 1", teamA: "Reef Sharks", teamB: "Night Marchers", datetime: "2026-08-21T19:00", location: "GCB 101", status: "upcoming", scoreA: "", scoreB: "" },
-    { id: "m2", game: "VALORANT", stage: "Semifinal 2", teamA: "Tide Breakers", teamB: "Lava Lions", datetime: "2026-08-21T20:30", location: "GCB 101", status: "upcoming", scoreA: "", scoreB: "" },
-    { id: "m3", game: "LEAGUE OF LEGENDS", stage: "Round 2", teamA: "Iosepa Five", teamB: "Tide Breakers", datetime: "2026-08-22T15:00", location: "Online", status: "upcoming", scoreA: "", scoreB: "" },
-    { id: "m4", game: "CS2", stage: "Group A", teamA: "Coconut Clutch", teamB: "Reef Sharks", datetime: "2026-08-22T17:00", location: "Online", status: "upcoming", scoreA: "", scoreB: "" },
-    { id: "m5", game: "DOTA 2", stage: "Round 1", teamA: "Mana Five", teamB: "Iosepa Five", datetime: "2026-08-24T18:00", location: "Online", status: "upcoming", scoreA: "", scoreB: "" },
-    { id: "m6", game: "SMASH ULTIMATE", stage: "Weekly #12", teamA: "Open Bracket", teamB: "All Players", datetime: "2026-08-26T18:30", location: "Aloha Center", status: "upcoming", scoreA: "", scoreB: "" },
-    { id: "m7", game: "HONOR OF KINGS", stage: "Ladder Week 3", teamA: "Island Kings", teamB: "Night Marchers", datetime: "2026-08-27T19:00", location: "Online", status: "upcoming", scoreA: "", scoreB: "" },
-    { id: "m8", game: "VALORANT", stage: "Quarterfinal", teamA: "Reef Sharks", teamB: "Coconut Clutch", datetime: "2026-08-14T19:00", location: "GCB 101", status: "final", scoreA: "2", scoreB: "0" },
-    { id: "m9", game: "VALORANT", stage: "Quarterfinal", teamA: "Night Marchers", teamB: "Island Kings", datetime: "2026-08-14T20:30", location: "GCB 101", status: "final", scoreA: "2", scoreB: "1" },
-    { id: "m10", game: "LEAGUE OF LEGENDS", stage: "Round 1", teamA: "Iosepa Five", teamB: "Mana Five", datetime: "2026-08-13T18:00", location: "Online", status: "final", scoreA: "1", scoreB: "0" },
-    { id: "m11", game: "CS2", stage: "Group A", teamA: "Lava Lions", teamB: "Tide Breakers", datetime: "2026-08-12T19:00", location: "Online", status: "final", scoreA: "13", scoreB: "9" },
-    { id: "m12", game: "SMASH ULTIMATE", stage: "Weekly #11 Final", teamA: "K. Fonoti", teamB: "M. Tanaka", datetime: "2026-08-12T20:00", location: "Aloha Center", status: "final", scoreA: "3", scoreB: "2" },
-    { id: "m13", game: "HONOR OF KINGS", stage: "Ladder Week 2", teamA: "Island Kings", teamB: "Tide Breakers", datetime: "2026-08-11T19:00", location: "Online", status: "final", scoreA: "2", scoreB: "0" }
-  ],
+  // The matches collection is no longer displayed anywhere — schedule,
+  // results, and standings all derive from the bracket setting above.
+  matches: [],
 
   news: [
     { id: "n1", title: "Spring Invitational registration is open", tag: "TOURNAMENT", date: "2026-08-14", pinned: true, linkText: "REGISTER NOW", linkUrl: "matches.html#register",

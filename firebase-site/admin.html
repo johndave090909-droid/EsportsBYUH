@@ -49,9 +49,8 @@
     <span class="mode-badge" id="mode-badge">DEMO MODE</span>
     <nav class="adnav" id="adnav">
       <button data-sec="home" class="active">HOME PAGE</button>
-      <button data-sec="matches">MATCHES</button>
+      <button data-sec="matches">MATCHES PAGE</button>
       <button data-sec="bracket">BRACKET</button>
-      <button data-sec="standings">STANDINGS</button>
       <button data-sec="news">NEWS</button>
       <button data-sec="photos">PHOTOS</button>
       <button data-sec="videos">VIDEOS</button>
@@ -98,35 +97,10 @@
       </form>
     </section>
 
-    <!-- ============ MATCHES ============ -->
+    <!-- ============ MATCHES PAGE ============ -->
     <section class="asec" id="sec-matches">
-      <h1>Matches</h1>
-      <p class="hint">"Upcoming" matches appear on the Schedule tab (and the home page); "Final" matches appear on Results. When a match is played, press ENTER RESULT on its row and type the score — it moves to Results automatically. COPY duplicates a match (handy for weeklies).</p>
-      <form id="form-match" class="panel card">
-        <h3 id="match-form-title">ADD MATCH</h3>
-        <input type="hidden" id="mt-id">
-        <div class="form-grid">
-          <label class="f">GAME<input id="mt-game" list="game-options" required placeholder="e.g. VALORANT"><datalist id="game-options"></datalist></label>
-          <label class="f">STAGE / ROUND<input id="mt-stage" placeholder="e.g. Semifinal 1"></label>
-          <label class="f">TEAM A<input id="mt-a" list="team-options" required><datalist id="team-options"></datalist></label>
-          <label class="f">TEAM B<input id="mt-b" list="team-options" required></label>
-          <label class="f">DATE &amp; TIME<input type="datetime-local" id="mt-dt" required></label>
-          <label class="f">LOCATION<input id="mt-loc" placeholder="e.g. GCB 101 or Online"></label>
-          <label class="f">STATUS<select id="mt-status"><option value="upcoming">Upcoming</option><option value="final">Final (played)</option></select></label>
-          <label class="f" id="score-wrap">SCORE — TEAM A / TEAM B
-            <span style="display:flex;gap:8px"><input id="mt-sa" placeholder="A"><input id="mt-sb" placeholder="B"></span>
-          </label>
-        </div>
-        <div class="actions">
-          <button class="btn">SAVE MATCH</button>
-          <button type="button" class="btn-sm" id="mt-cancel" hidden>CANCEL EDIT</button>
-        </div>
-      </form>
-      <div class="listhead">SCHEDULED</div>
-      <div id="list-upcoming"></div>
-      <div class="listhead">RESULTS</div>
-      <div id="list-final"></div>
-
+      <h1>Matches Page</h1>
+      <p class="hint">The Schedule and Results tabs, the Standings table, and the home page's "Upcoming Matches" are all built automatically from the <b>Bracket</b> — edit teams, scores, dates, and locations there. This page only controls the text at the top of the Matches page and the register banner.</p>
       <h1 style="margin-top:40px;font-size:22px">Page Text &amp; Register Banner</h1>
       <form id="form-matchpage" class="panel card">
         <div class="form-grid">
@@ -144,9 +118,13 @@
     <!-- ============ BRACKET ============ -->
     <section class="asec" id="sec-bracket">
       <h1>Bracket</h1>
-      <p class="hint">Works for any format and any number of teams — odd or even. Type your team count and BUILD ROUNDS creates the right rounds automatically (with BYE slots when needed), or add rounds and matches by hand. Round names are editable and shown on the site; a blank team slot shows as TBD, a slot opposite a team as BYE; fill both scores and the loser dims automatically. Nothing changes on the site until you press SAVE BRACKET.</p>
+      <p class="hint">This is the one place to run a tournament: the Schedule tab, Results tab, Standings table, and the home page's "Upcoming Matches" all fill in automatically from what you enter here. Each match card has the two teams and scores on top, and its date &amp; location underneath. Round names are editable and become the "stage" shown on the site; a blank team slot shows as TBD, a slot opposite a team as BYE; fill both scores and the match counts as played (it moves from Schedule to Results and updates Standings). Nothing changes on the site until you press SAVE BRACKET.</p>
       <form id="form-bracket" class="panel card">
-        <label class="f wide" style="margin-bottom:14px">BRACKET TITLE<input id="b-title" placeholder="e.g. VALORANT — SPRING INVITATIONAL · 8 TEAMS"></label>
+        <div class="form-grid" style="margin-bottom:14px">
+          <label class="f">GAME (SHOWN ON SCHEDULE &amp; RESULTS)<input id="b-game" list="game-options" placeholder="e.g. VALORANT"><datalist id="game-options"></datalist></label>
+          <label class="f">BRACKET TITLE<input id="b-title" placeholder="e.g. VALORANT — SPRING INVITATIONAL · 8 TEAMS"></label>
+          <label class="f wide">STANDINGS FOOTNOTE (OPTIONAL)<input id="b-note" placeholder="e.g. 3 points per win · Spring 2026"></label>
+        </div>
         <div class="actions" style="margin-top:0">
           <input type="number" id="b-teams" min="2" max="64" placeholder="# of teams" style="width:130px">
           <button type="button" class="btn-sm" id="b-build">BUILD ROUNDS</button>
@@ -154,33 +132,6 @@
         </div>
         <div class="bracket-edit" id="b-rounds"></div>
         <div class="actions"><button class="btn">SAVE BRACKET</button></div>
-      </form>
-    </section>
-
-    <!-- ============ STANDINGS ============ -->
-    <section class="asec" id="sec-standings">
-      <h1>Standings</h1>
-      <p class="hint">Rows are ranked automatically by points (then map +/−). Check "qualified" to highlight a team in gold.</p>
-      <form id="form-standing" class="panel card">
-        <h3 id="standing-form-title">ADD TEAM ROW</h3>
-        <input type="hidden" id="st-idx" value="">
-        <div class="form-grid">
-          <label class="f">TEAM<input id="st-team" required></label>
-          <label class="f">POINTS<input type="number" id="st-pts" value="0"></label>
-          <label class="f">WINS<input type="number" id="st-w" value="0"></label>
-          <label class="f">LOSSES<input type="number" id="st-l" value="0"></label>
-          <label class="f">MAP +/− (E.G. +9 OR -2)<input id="st-diff" value="+0"></label>
-          <label class="f chk"><input type="checkbox" id="st-q"> QUALIFIED (HIGHLIGHTED)</label>
-        </div>
-        <div class="actions">
-          <button class="btn">SAVE ROW</button>
-          <button type="button" class="btn-sm" id="st-cancel" hidden>CANCEL EDIT</button>
-        </div>
-      </form>
-      <div id="standings-list"></div>
-      <form id="form-standings-note" class="panel card" style="margin-top:26px">
-        <label class="f wide">FOOTNOTE UNDER TABLE<input id="st-note"></label>
-        <div class="actions"><button class="btn">SAVE NOTE</button></div>
       </form>
     </section>
 

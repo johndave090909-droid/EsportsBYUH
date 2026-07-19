@@ -265,64 +265,11 @@ $('form-home').addEventListener('submit', async e => {
   } catch (err) { toast(err.message); }
 });
 
-/* ================= matches ================= */
+/* ================= matches page text ================= */
+// Schedule, results, and standings all derive from the bracket — this section
+// only edits the page's intro text and register banner.
 
-function matchRowHTML(m) {
-  const final = m.status === 'final';
-  const score = final ? ` · ${m.scoreA}–${m.scoreB}` : '';
-  return `<div class="item-row">
-    <div class="item-main"><b>${esc(m.teamA)} vs ${esc(m.teamB)}</b>
-    <small>${esc((m.game || '').toUpperCase())} · ${esc(m.stage || '')} · ${esc(fmtDT(m.datetime))} · ${esc(m.location || '')}${esc(score)}</small></div>
-    ${final ? '' : `<button type="button" class="btn-sm" data-act="result" data-id="${esc(m.id)}">ENTER RESULT</button>`}
-    <button type="button" class="btn-sm" data-act="dup" data-id="${esc(m.id)}">COPY</button>
-    <button type="button" class="btn-sm" data-act="edit" data-id="${esc(m.id)}">EDIT</button>
-    <button type="button" class="btn-sm danger" data-act="del" data-id="${esc(m.id)}">DELETE</button>
-  </div>`;
-}
-
-function syncScoreVisibility() { $('score-wrap').hidden = $('mt-status').value !== 'final'; }
-$('mt-status').addEventListener('change', syncScoreVisibility);
-syncScoreVisibility();
-
-function fillMatchForm(m, asCopy) {
-  $('mt-id').value = asCopy ? '' : m.id;
-  $('mt-game').value = m.game || '';
-  $('mt-stage').value = m.stage || '';
-  $('mt-a').value = m.teamA || '';
-  $('mt-b').value = m.teamB || '';
-  $('mt-dt').value = (m.datetime || '').slice(0, 16);
-  $('mt-loc').value = m.location || '';
-  $('mt-status').value = asCopy ? 'upcoming' : (m.status || 'upcoming');
-  $('mt-sa').value = asCopy ? '' : (m.scoreA || '');
-  $('mt-sb').value = asCopy ? '' : (m.scoreB || '');
-  syncScoreVisibility();
-  $('match-form-title').textContent = asCopy ? 'ADD MATCH (COPY)' : 'EDIT MATCH';
-  $('mt-cancel').hidden = false;
-  $('form-match').scrollIntoView({ behavior: 'smooth' });
-}
-
-let matchCache = [];
-
-async function refreshMatches() {
-  matchCache = await store.list('matches');
-  const byDT = (a, b) => String(a.datetime || '').localeCompare(String(b.datetime || ''));
-  const up = matchCache.filter(m => m.status !== 'final').sort(byDT);
-  const fin = matchCache.filter(m => m.status === 'final').sort((a, b) => byDT(b, a));
-  $('list-upcoming').innerHTML = up.map(matchRowHTML).join('') || '<p class="hint">No scheduled matches.</p>';
-  $('list-final').innerHTML = fin.map(matchRowHTML).join('') || '<p class="hint">No results yet.</p>';
-
-  // autocomplete suggestions: games from the Home Page list, teams from
-  // existing matches and standings
-  const home = await store.getSetting('home');
-  const gameSet = new Set([...((home && home.games) || []).map(g => g.name), ...matchCache.map(m => m.game)].filter(Boolean));
-  $('game-options').innerHTML = [...gameSet].map(g => `<option value="${esc(g)}"></option>`).join('');
-  const stg = await store.getSetting('standings');
-  const teamSet = new Set([
-    ...matchCache.map(m => m.teamA), ...matchCache.map(m => m.teamB),
-    ...(((stg && stg.rows) || []).map(r => r.team))
-  ].filter(Boolean));
-  $('team-options').innerHTML = [...teamSet].sort().map(t => `<option value="${esc(t)}"></option>`).join('');
-
+async function refreshMatchpage() {
   const mp = await store.getSetting('matchespage') || {};
   $('mp-kicker').value = mp.kicker || '';
   $('mp-lede').value = mp.lede || '';
@@ -331,87 +278,6 @@ async function refreshMatches() {
   $('mp-regbtn').value = mp.regBtn || '';
   schedulePreview();
 }
-
-function resetMatchForm() {
-  $('form-match').reset();
-  $('mt-id').value = '';
-  $('match-form-title').textContent = 'ADD MATCH';
-  $('mt-cancel').hidden = true;
-  syncScoreVisibility();
-}
-
-$('mt-cancel').addEventListener('click', resetMatchForm);
-
-for (const listId of ['list-upcoming', 'list-final']) {
-  $(listId).addEventListener('click', async e => {
-    const btn = e.target.closest('button[data-act]');
-    if (!btn) return;
-    const act = btn.dataset.act;
-    if (act === 'result-cancel') { refreshMatches(); return; }
-    const m = matchCache.find(x => x.id === btn.dataset.id);
-    if (!m) return;
-    try {
-      if (act === 'del') {
-        if (!confirm(`Delete ${m.teamA} vs ${m.teamB}?`)) return;
-        await store.remove('matches', m.id);
-        toast('Match deleted.');
-        refreshMatches();
-      } else if (act === 'result') {
-        // swap the row into a quick score-entry form
-        const row = btn.closest('.item-row');
-        row.innerHTML = `
-          <div class="item-main"><b>${esc(m.teamA)} vs ${esc(m.teamB)}</b><small>Enter the final score</small></div>
-          <input class="qs-a" inputmode="numeric" placeholder="${esc(m.teamA)}" style="width:90px">
-          <input class="qs-b" inputmode="numeric" placeholder="${esc(m.teamB)}" style="width:90px">
-          <button type="button" class="btn-sm" data-act="result-save" data-id="${esc(m.id)}">SAVE FINAL</button>
-          <button type="button" class="btn-sm" data-act="result-cancel">CANCEL</button>`;
-        row.querySelector('.qs-a').focus();
-      } else if (act === 'result-save') {
-        const row = btn.closest('.item-row');
-        const sa = row.querySelector('.qs-a').value.trim();
-        const sb = row.querySelector('.qs-b').value.trim();
-        if (sa === '' || sb === '') { toast('Enter both scores.'); return; }
-        await store.update('matches', m.id, { ...m, status: 'final', scoreA: sa, scoreB: sb });
-        toast(`Result saved — ${m.teamA} ${sa}–${sb} ${m.teamB}.`);
-        refreshMatches();
-      } else if (act === 'dup') {
-        fillMatchForm(m, true);
-      } else {
-        fillMatchForm(m, false);
-      }
-    } catch (err) { toast(err.message); }
-  });
-}
-
-function collectMatchForm() {
-  return {
-    game: $('mt-game').value.trim(),
-    stage: $('mt-stage').value.trim(),
-    teamA: $('mt-a').value.trim(),
-    teamB: $('mt-b').value.trim(),
-    datetime: $('mt-dt').value,
-    location: $('mt-loc').value.trim(),
-    status: $('mt-status').value,
-    scoreA: $('mt-sa').value.trim(),
-    scoreB: $('mt-sb').value.trim()
-  };
-}
-
-$('form-match').addEventListener('submit', async e => {
-  e.preventDefault();
-  try {
-    const obj = collectMatchForm();
-    if (obj.status === 'final' && (obj.scoreA === '' || obj.scoreB === '')) {
-      throw new Error('A final match needs both scores.');
-    }
-    const id = $('mt-id').value;
-    if (id) await store.update('matches', id, obj);
-    else await store.add('matches', obj);
-    resetMatchForm();
-    toast('Match saved.');
-    refreshMatches();
-  } catch (err) { toast(err.message); }
-});
 
 function collectMatchpageForm() {
   return {
@@ -440,6 +306,7 @@ function bracketRowHTML(m) {
     <button type="button" class="m-del" title="Remove this match">✕</button>
     <div class="trow"><input class="ba" placeholder="Team" value="${esc(m.a || '')}"><input class="bas" placeholder="–" value="${esc(m.as || '')}"></div>
     <div class="trow"><input class="bb" placeholder="Team" value="${esc(m.b || '')}"><input class="bbs" placeholder="–" value="${esc(m.bs || '')}"></div>
+    <div class="mrow"><input type="datetime-local" class="bwhen" title="Date &amp; time" value="${esc((m.when || '').slice(0, 16))}"><input class="bwhere" placeholder="Location" value="${esc(m.where || '')}"></div>
   </div>`;
 }
 
@@ -458,6 +325,11 @@ function renderBracketEditor(rounds) {
 async function refreshBracket() {
   const br = normalizeBracket(await store.getSetting('bracket')) || {};
   $('b-title').value = br.title || '';
+  $('b-game').value = br.game || '';
+  $('b-note').value = br.note || '';
+  const home = await store.getSetting('home');
+  $('game-options').innerHTML = (((home && home.games) || []).map(g => g.name).filter(Boolean))
+    .map(g => `<option value="${esc(g)}"></option>`).join('');
   const rounds = (br.rounds || []).length ? br.rounds
     : [{ name: 'SEMIFINALS', matches: [{}, {}] }, { name: 'GRAND FINAL', matches: [{}] }];
   renderBracketEditor(rounds);
@@ -505,10 +377,17 @@ function collectBracketForm() {
       a: card.querySelector('.ba').value.trim(),
       as: card.querySelector('.bas').value.trim(),
       b: card.querySelector('.bb').value.trim(),
-      bs: card.querySelector('.bbs').value.trim()
+      bs: card.querySelector('.bbs').value.trim(),
+      when: card.querySelector('.bwhen').value,
+      where: card.querySelector('.bwhere').value.trim()
     }))
   })).filter(r => r.matches.length);
-  return { title: $('b-title').value.trim(), rounds };
+  return {
+    title: $('b-title').value.trim(),
+    game: $('b-game').value.trim(),
+    note: $('b-note').value.trim(),
+    rounds
+  };
 }
 
 $('form-bracket').addEventListener('submit', async e => {
@@ -519,95 +398,7 @@ $('form-bracket').addEventListener('submit', async e => {
   } catch (err) { toast(err.message); }
 });
 
-/* ================= standings ================= */
-
-const diffNum = r => parseInt(String(r.diff || '0').replace('−', '-').replace('+', ''), 10) || 0;
-const sortRows = rows => rows.slice().sort((a, b) => (b.pts - a.pts) || (diffNum(b) - diffNum(a)));
-
-let standingsCache = { rows: [], note: '' };
-
-async function refreshStandings() {
-  const st = await store.getSetting('standings') || { rows: [], note: '' };
-  st.rows = sortRows(st.rows || []);
-  standingsCache = st;
-  $('st-note').value = st.note || '';
-  $('standings-list').innerHTML = st.rows.map((r, i) => `
-    <div class="item-row">
-      <span class="tag-chip">#${i + 1}</span>
-      <div class="item-main"><b>${esc(r.team)}</b><small>${esc(r.w)}W – ${esc(r.l)}L · map ${esc(r.diff)} · ${esc(r.pts)} pts${r.q ? ' · QUALIFIED' : ''}</small></div>
-      <button type="button" class="btn-sm" data-act="edit" data-i="${i}">EDIT</button>
-      <button type="button" class="btn-sm danger" data-act="del" data-i="${i}">DELETE</button>
-    </div>`).join('') || '<p class="hint">No standings rows yet.</p>';
-  schedulePreview();
-}
-
-function resetStandingForm() {
-  $('form-standing').reset();
-  $('st-idx').value = '';
-  $('standing-form-title').textContent = 'ADD TEAM ROW';
-  $('st-cancel').hidden = true;
-}
-$('st-cancel').addEventListener('click', resetStandingForm);
-
-$('standings-list').addEventListener('click', async e => {
-  const btn = e.target.closest('button[data-act]');
-  if (!btn) return;
-  const i = Number(btn.dataset.i);
-  const r = standingsCache.rows[i];
-  if (!r) return;
-  if (btn.dataset.act === 'del') {
-    if (!confirm(`Remove ${r.team} from standings?`)) return;
-    standingsCache.rows.splice(i, 1);
-    await store.saveSetting('standings', standingsCache);
-    toast('Row removed.');
-    refreshStandings();
-  } else {
-    $('st-idx').value = i;
-    $('st-team').value = r.team;
-    $('st-w').value = r.w;
-    $('st-l').value = r.l;
-    $('st-diff').value = r.diff;
-    $('st-pts').value = r.pts;
-    $('st-q').checked = !!r.q;
-    $('standing-form-title').textContent = 'EDIT TEAM ROW';
-    $('st-cancel').hidden = false;
-  }
-});
-
-function collectStandingRow() {
-  return {
-    team: $('st-team').value.trim(),
-    w: Number($('st-w').value) || 0,
-    l: Number($('st-l').value) || 0,
-    diff: $('st-diff').value.trim() || '+0',
-    pts: Number($('st-pts').value) || 0,
-    q: $('st-q').checked
-  };
-}
-
-$('form-standing').addEventListener('submit', async e => {
-  e.preventDefault();
-  try {
-    const row = collectStandingRow();
-    const idx = $('st-idx').value;
-    if (idx !== '') standingsCache.rows[Number(idx)] = row;
-    else standingsCache.rows.push(row);
-    standingsCache.rows = sortRows(standingsCache.rows);
-    await store.saveSetting('standings', standingsCache);
-    resetStandingForm();
-    toast('Standings saved.');
-    refreshStandings();
-  } catch (err) { toast(err.message); }
-});
-
-$('form-standings-note').addEventListener('submit', async e => {
-  e.preventDefault();
-  try {
-    standingsCache.note = $('st-note').value.trim();
-    await store.saveSetting('standings', standingsCache);
-    toast('Note saved.');
-  } catch (err) { toast(err.message); }
-});
+/* Standings are computed from the bracket — there is no separate editor. */
 
 /* ================= news ================= */
 
@@ -1175,11 +966,11 @@ $('dm-form').addEventListener('submit', async e => {
 
 const PREVIEW_PAGE = {
   home: 'index.html', matches: 'matches.html', bracket: 'matches.html',
-  standings: 'matches.html', news: 'news.html', photos: 'photos.html',
+  news: 'news.html', photos: 'photos.html',
   videos: 'videos.html', site: 'index.html', officers: 'index.html'
 };
 const NO_PREVIEW = { officers: true };
-const PREVIEW_TAB = { matches: 'schedule', bracket: 'bracket', standings: 'standings' };
+const PREVIEW_TAB = { matches: 'schedule', bracket: 'bracket' };
 
 let activeSec = 'home';
 let formsReady = false;
@@ -1204,7 +995,6 @@ function draftedList(cache, editIdField, draft, hasContent) {
 }
 
 function buildPreviewData() {
-  const matchDraft = collectMatchForm();
   const newsDraft = collectNewsForm();
   const photoDraft = collectPhotoForm();
   const videoDraft = collectVideoForm();
@@ -1214,23 +1004,14 @@ function buildPreviewData() {
   let videos = draftedList(videoCache, 'v-id', videoDraft, !!videoDraft.title);
   if (videoDraft.title && videoDraft.featured) videos = videos.map(v => v.id !== ($('v-id').value || '__draft__') && v.featured ? { ...v, featured: false } : v);
 
-  const stRows = (standingsCache.rows || []).slice();
-  const stDraft = collectStandingRow();
-  if (stDraft.team) {
-    const idx = $('st-idx').value;
-    if (idx !== '') stRows[Number(idx)] = stDraft; else stRows.push(stDraft);
-  }
-
   return {
     settings: {
       site: collectSiteForm(),
       home: collectHomeForm(),
       matchespage: collectMatchpageForm(),
-      bracket: collectBracketForm(),
-      standings: { note: $('st-note').value.trim(), rows: sortRows(stRows) }
+      bracket: collectBracketForm()
     },
     collections: {
-      matches: draftedList(matchCache, 'mt-id', matchDraft, !!(matchDraft.teamA || matchDraft.teamB)),
       news,
       photos: draftedList(photoCache, 'p-id', photoDraft, !!(photoDraft.caption || photoDraft.image)),
       videos
@@ -1270,7 +1051,7 @@ $('preview-toggle').addEventListener('click', () => {
 
 async function loadAll() {
   await Promise.all([
-    refreshHome(), refreshMatches(), refreshBracket(), refreshStandings(),
+    refreshHome(), refreshMatchpage(), refreshBracket(),
     refreshNews(), refreshPhotos(), refreshVideos(), refreshSite(), refreshOfficers()
   ]);
   formsReady = true;

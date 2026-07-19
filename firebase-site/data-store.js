@@ -21,6 +21,48 @@ export function normalizeBracket(br) {
   return { title: br.title || '', rounds };
 }
 
+// The bracket is the single source of truth for matches and standings.
+// Every fully-named matchup in it becomes a schedule/result row: round name =
+// stage, bracket-level game/when/where fill in the rest. BYE and TBD slots
+// are skipped — they aren't real matches.
+export function bracketMatches(br) {
+  br = normalizeBracket(br);
+  if (!br) return [];
+  const out = [];
+  for (const r of br.rounds || []) {
+    for (const m of r.matches || []) {
+      const a = String(m.a || '').trim(), b = String(m.b || '').trim();
+      if (!a || !b) continue;
+      if (a.toUpperCase() === 'BYE' || b.toUpperCase() === 'BYE') continue;
+      const done = String(m.as ?? '') !== '' && String(m.bs ?? '') !== '';
+      out.push({
+        game: br.game || '', stage: r.name || '', teamA: a, teamB: b,
+        datetime: m.when || '', location: m.where || '',
+        status: done ? 'final' : 'upcoming',
+        scoreA: String(m.as ?? ''), scoreB: String(m.bs ?? '')
+      });
+    }
+  }
+  return out;
+}
+
+// Standings computed from played bracket matches: 3 points per win, ranked by
+// points then score difference. Teams in unplayed matches appear at 0-0.
+export function bracketStandings(br) {
+  const rows = new Map();
+  const row = t => { if (!rows.has(t)) rows.set(t, { team: t, w: 0, l: 0, d: 0 }); return rows.get(t); };
+  for (const m of bracketMatches(br)) {
+    const A = row(m.teamA), B = row(m.teamB);
+    if (m.status !== 'final') continue;
+    const sa = Number(m.scoreA) || 0, sb = Number(m.scoreB) || 0;
+    A.d += sa - sb; B.d += sb - sa;
+    if (sa > sb) { A.w++; B.l++; } else if (sb > sa) { B.w++; A.l++; }
+  }
+  return [...rows.values()]
+    .sort((a, b) => (b.w - a.w) || (b.d - a.d) || a.team.localeCompare(b.team))
+    .map(r => ({ team: r.team, w: r.w, l: r.l, diff: (r.d >= 0 ? '+' : '') + r.d, pts: r.w * 3, q: false }));
+}
+
 /* ======================= local (demo) backend ======================= */
 
 const LS_DB = 'seasiderDB';
