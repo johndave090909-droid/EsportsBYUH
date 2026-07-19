@@ -60,7 +60,6 @@ const localStore = {
     emitAuth(o.email);
     return o.email;
   },
-  async signup() { throw new Error('Demo mode: officers are added from the Officers section of the admin panel.'); },
   async loginGoogle() { throw new Error('Demo mode: sign in with the demo email and password.'); },
   async uploadFile() { throw new Error('Demo mode: file uploads to Storage need live Firebase mode.'); },
   async resetPassword() { throw new Error('Demo mode: ask another officer to remove and re-add your account with a new password.'); },
@@ -138,7 +137,6 @@ const localStore = {
   // Community chat/inbox is live-mode only.
   currentUser() { return null; },
   async userLogin() { throw new Error('Chat needs the live Firebase site.'); },
-  async userSignup() { throw new Error('Chat needs the live Firebase site.'); },
   async userLoginGoogle() { throw new Error('Chat needs the live Firebase site.'); },
   async onChat() { return () => {}; },
   async sendChat() { throw new Error('Chat needs the live Firebase site.'); },
@@ -183,16 +181,6 @@ const fireStore = {
     if (!(await this.isOfficer(em))) {
       await fb.A.signOut(fb.auth);
       throw new Error('This account is not on the officer list. Ask an existing officer to add "' + em + '" on the Officers page.');
-    }
-    return em;
-  },
-  async signup(email, password) {
-    await init();
-    await fb.A.createUserWithEmailAndPassword(fb.auth, String(email).trim(), password);
-    const em = String(email).trim().toLowerCase();
-    if (!(await this.isOfficer(em))) {
-      await fb.A.signOut(fb.auth);
-      throw new Error('Account created. Ask an existing officer to add "' + em + '" on the Officers page, then sign in.');
     }
     return em;
   },
@@ -265,11 +253,28 @@ const fireStore = {
     const qs = await fb.F.getDocs(fb.F.collection(fb.db, 'officers'));
     return qs.docs.map(d => ({ email: d.id, name: (d.data() || {}).name || '' }));
   },
+  // Adding an officer also creates their sign-in account — on a throwaway
+  // secondary app instance so the current officer stays signed in — and emails
+  // them a link to set their own password. There is no self-signup anywhere.
   async addOfficer({ email, name }) {
     await init();
     const em = String(email).toLowerCase().trim();
     if (!em) throw new Error('An email is required.');
     await fb.F.setDoc(fb.F.doc(fb.db, 'officers', em), { name: name || '' });
+    const appM = await import(SDK + 'firebase-app.js');
+    const side = appM.initializeApp(firebaseConfig, 'acct-' + Date.now().toString(36));
+    try {
+      const sideAuth = fb.A.getAuth(side);
+      await fb.A.createUserWithEmailAndPassword(sideAuth, em, crypto.randomUUID() + 'A9!');
+      await fb.A.signOut(sideAuth);
+      await fb.A.sendPasswordResetEmail(fb.auth, em);
+      return 'created';
+    } catch (e) {
+      if (e && e.code === 'auth/email-already-in-use') return 'existing';
+      throw new Error('Officer added, but their account setup failed: ' + (e.message || e));
+    } finally {
+      appM.deleteApp(side).catch(() => {});
+    }
   },
   async removeOfficer(email) {
     const officers = await this.listOfficers();
@@ -289,12 +294,6 @@ const fireStore = {
   async userLogin(email, password) {
     await init();
     const cred = await fb.A.signInWithEmailAndPassword(fb.auth, String(email).trim(), password);
-    return cred.user.email.toLowerCase();
-  },
-  async userSignup(name, email, password) {
-    await init();
-    const cred = await fb.A.createUserWithEmailAndPassword(fb.auth, String(email).trim(), password);
-    if (name) await fb.A.updateProfile(cred.user, { displayName: name });
     return cred.user.email.toLowerCase();
   },
   async userLoginGoogle() {

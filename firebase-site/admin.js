@@ -176,18 +176,6 @@ $('btn-google').addEventListener('click', async () => {
   }
 });
 
-$('btn-signup').addEventListener('click', async () => {
-  const errEl = $('login-error');
-  errEl.hidden = true;
-  try {
-    if (!$('login-email').value || !$('login-pass').value) throw new Error('Enter the email and password to use for the new account, then press "Create an account".');
-    await store.signup($('login-email').value, $('login-pass').value);
-  } catch (err) {
-    errEl.textContent = err.message;
-    errEl.hidden = false;
-  }
-});
-
 $('btn-forgot').addEventListener('click', async () => {
   const errEl = $('login-error');
   errEl.hidden = true;
@@ -943,7 +931,7 @@ async function refreshOfficers() {
   $('o-pass-wrap').hidden = live;
   $('form-mypass').hidden = live;
   $('off-hint').textContent = live
-    ? 'Officers listed here can sign in and edit the site. To add someone: enter their email below — if it is a Google account they can then just press "Continue with Google"; otherwise they use "Create an account" on the login screen with that same email.'
+    ? 'Officers listed here can sign in and edit the site — accounts can only be created from this page, never from the login screen. Adding someone creates their account and emails them a link to set their password. If their email is a Google account, they can skip the email and just press "Continue with Google".'
     : 'Demo mode: officer accounts live in this browser. Add an officer with an email and password they can sign in with.';
   const officers = await store.listOfficers();
   $('officer-list').innerHTML = officers.map(o => `
@@ -968,13 +956,17 @@ $('officer-list').addEventListener('click', async e => {
 $('form-officer').addEventListener('submit', async e => {
   e.preventDefault();
   try {
-    await store.addOfficer({
+    const result = await store.addOfficer({
       name: $('o-name').value.trim(),
       email: $('o-email').value.trim(),
       password: $('o-pass').value
     });
     $('form-officer').reset();
-    toast('Officer added.');
+    toast(result === 'created'
+      ? 'Officer added — they got an email with a link to set their password.'
+      : result === 'existing'
+        ? 'Officer added — they already have an account and can sign in now.'
+        : 'Officer added.');
     refreshOfficers();
   } catch (err) { toast(err.message); }
 });

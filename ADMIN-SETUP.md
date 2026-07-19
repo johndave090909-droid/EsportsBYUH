@@ -54,12 +54,16 @@ shared between computers, and demo passwords are not real security.
    Publish. These rules make content publicly readable but only writable by
    people on the officer list.
 7. **Sign in:** open `/admin.html` → press **Continue with Google** with the
-   account from step 5 (or "Create an account" for email/password). Use Site
+   account from step 5. (No Google account? In the Firebase console go to
+   Authentication → Users → **Add user** with that email and a password —
+   there is deliberately no self-signup on the login screen.) Use Site
    Settings → **Load sample content** to fill the site with the starter
    content, then edit away.
 
 Officers after the first one are easier: an existing officer adds their email
-on the Officers page, then they use "Create an account" on the login screen.
+on the Officers page — that creates their sign-in account and emails them a
+link to set their own password. Google-account officers can skip the email
+and just press "Continue with Google".
 
 ### Deploying the site to Firebase Hosting
 
