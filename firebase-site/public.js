@@ -204,7 +204,9 @@ async function renderHome(site) {
       const key = (c.game || 'CLUB').trim().toUpperCase();
       if (!newest.has(key)) newest.set(key, c);
     }
-    const reigning = [...newest.values()];
+    // Home shows only the 4 most recent games' champions; the full list
+    // lives on the Matches page's CHAMPIONS tab.
+    const reigning = [...newest.values()].slice(0, 4);
     $('home-champs').innerHTML = reigning.map(champCardHTML).join('');
     champsSec.hidden = !reigning.length;
   }
