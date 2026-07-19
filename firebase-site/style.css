@@ -4,7 +4,8 @@
    so the static fallback never flashes; a 3s inline failsafe reveals it if JS fails */
 html.wait section,html.wait .ticker{opacity:0}
 section,.ticker{transition:opacity .2s}
-body{margin:0;background:#0B0D12;color:#EDEFF3;font-family:Barlow,sans-serif;-webkit-font-smoothing:antialiased}
+body{margin:0;background:#0B0D12;color:#EDEFF3;font-family:Barlow,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column}
+body>.wrap{width:100%;box-sizing:border-box;max-width:1320px}
 a{color:#FDB913;text-decoration:none}a:hover{color:#FFD25E}
 .cp{font-family:'Chakra Petch',sans-serif}
 header{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:16px 40px;border-bottom:1px solid rgba(255,255,255,.08);position:sticky;top:0;background:rgba(11,13,18,.92);backdrop-filter:blur(8px);z-index:10}
@@ -30,7 +31,7 @@ h2.sec{margin:0;font-family:'Chakra Petch',sans-serif;font-size:28px;letter-spac
 .sechead a{font-family:'Chakra Petch',sans-serif;font-size:13px;letter-spacing:.12em}
 .card{background:#141821;border:1px solid rgba(255,255,255,.08)}
 .ph{position:absolute;inset:0;background:linear-gradient(135deg,#151A24,#10141C);display:flex;align-items:center;justify-content:center;color:#4A5364;font-family:'Chakra Petch',sans-serif;font-size:12px;letter-spacing:.1em;text-align:center;padding:12px}
-footer{border-top:1px solid rgba(255,255,255,.08);padding:32px 40px;display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;font-size:13px;color:#8B93A3}
+footer{margin-top:auto;border-top:1px solid rgba(255,255,255,.08);padding:32px 40px;display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;font-size:13px;color:#8B93A3}
 @keyframes tickerScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 /* home */
 .hero{position:relative;min-height:560px;display:flex;overflow:hidden}
