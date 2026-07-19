@@ -111,6 +111,14 @@ export const SEED = {
   // results, and standings all derive from the bracket setting above.
   matches: [],
 
+  // Hall of fame: one entry per tournament win; the newest entry per game is
+  // that game's "Reigning Champions" card on the home page.
+  champions: [
+    { id: "c1", game: "VALORANT", title: "Fall Cup 2025", champion: "Reef Sharks", runnerUp: "Night Marchers", score: "3–2", dateLabel: "Fall 2025", date: "2025-11-21", image: "" },
+    { id: "c2", game: "SMASH ULTIMATE", title: "Fall Cup 2025 — Smash Bracket", champion: "K. Fonoti", runnerUp: "M. Tanaka", score: "3–1", dateLabel: "Fall 2025", date: "2025-11-22", image: "" },
+    { id: "c3", game: "DOTA 2", title: "Summer Tournament 2025", champion: "Mana Five", runnerUp: "Iosepa Five", score: "2–1", dateLabel: "Summer 2025", date: "2025-07-18", image: "" }
+  ],
+
   news: [
     { id: "n1", title: "Spring Invitational registration is open", tag: "TOURNAMENT", date: "2026-08-14", pinned: true, linkText: "REGISTER NOW", linkUrl: "/matches#register",
       body: "The Seasider Cup Spring Invitational runs Aug 21–28 across all six club titles. Free for all BYU–Hawaii students — enter as a full team or sign up solo and we'll place you. Registration closes Aug 20 at midnight." },

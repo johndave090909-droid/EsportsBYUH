@@ -400,6 +400,114 @@ $('form-bracket').addEventListener('submit', async e => {
 
 /* Standings are computed from the bracket — there is no separate editor. */
 
+/* ================= champions (hall of fame) ================= */
+
+let champCache = [];
+const byChampDate = (a, b) => String(b.date || '').localeCompare(String(a.date || ''));
+
+async function refreshChamps() {
+  champCache = (await store.list('champions')).sort(byChampDate);
+  $('champ-admin-list').innerHTML = champCache.map(c => `
+    <div class="item-row">
+      <div class="item-main"><b>🏆 ${esc(c.champion)}</b>
+      <small>${esc([(c.game || '').toUpperCase(), c.title, c.runnerUp ? 'def. ' + c.runnerUp : '', c.score, c.dateLabel].filter(Boolean).join(' · '))}</small></div>
+      <button type="button" class="btn-sm" data-act="edit" data-id="${esc(c.id)}">EDIT</button>
+      <button type="button" class="btn-sm danger" data-act="del" data-id="${esc(c.id)}">DELETE</button>
+    </div>`).join('') || '<p class="hint">No champions saved yet.</p>';
+  schedulePreview();
+}
+
+function resetChampForm() {
+  $('form-champ').reset();
+  $('c-id').value = '';
+  setImgField('c-image', '');
+  $('champ-form-title').textContent = 'ADD CHAMPION';
+  $('c-cancel').hidden = true;
+}
+$('c-cancel').addEventListener('click', resetChampForm);
+
+function collectChampForm() {
+  return {
+    game: $('c-game').value.trim(),
+    title: $('c-title').value.trim(),
+    champion: $('c-champion').value.trim(),
+    runnerUp: $('c-runnerup').value.trim(),
+    score: $('c-score').value.trim(),
+    dateLabel: $('c-datelabel').value.trim(),
+    date: $('c-date').value,
+    image: $('c-image').value.trim()
+  };
+}
+
+$('champ-admin-list').addEventListener('click', async e => {
+  const btn = e.target.closest('button[data-act]');
+  if (!btn) return;
+  const c = champCache.find(x => x.id === btn.dataset.id);
+  if (!c) return;
+  if (btn.dataset.act === 'del') {
+    if (!confirm(`Remove ${c.champion} (${c.game}) from the hall of fame?`)) return;
+    try {
+      await store.remove('champions', c.id);
+      toast('Champion removed.');
+      refreshChamps();
+    } catch (err) { toast(err.message); }
+  } else {
+    $('c-id').value = c.id;
+    $('c-game').value = c.game || '';
+    $('c-title').value = c.title || '';
+    $('c-champion').value = c.champion || '';
+    $('c-runnerup').value = c.runnerUp || '';
+    $('c-score').value = c.score || '';
+    $('c-datelabel').value = c.dateLabel || '';
+    $('c-date').value = c.date || '';
+    setImgField('c-image', c.image);
+    $('champ-form-title').textContent = 'EDIT CHAMPION';
+    $('c-cancel').hidden = false;
+    $('form-champ').scrollIntoView({ behavior: 'smooth' });
+  }
+});
+
+$('form-champ').addEventListener('submit', async e => {
+  e.preventDefault();
+  try {
+    const obj = collectChampForm();
+    const id = $('c-id').value;
+    if (id) await store.update('champions', id, obj);
+    else await store.add('champions', obj);
+    resetChampForm();
+    toast('Champion saved.');
+    refreshChamps();
+  } catch (err) { toast(err.message); }
+});
+
+// Reads the final out of the bracket editor and pre-fills a champion entry:
+// winner (higher score in the last round), runner-up, score, game, season.
+$('b-archive').addEventListener('click', () => {
+  const br = collectBracketForm();
+  const rounds = br.rounds || [];
+  const final = rounds.length ? rounds[rounds.length - 1].matches[0] : null;
+  if (!final || !final.a || !final.b) { toast('Fill both finalists into the last round first.'); return; }
+  if (final.as === '' || final.bs === '' || Number(final.as) === Number(final.bs)) {
+    toast('Enter the final score first — the champion needs the higher number.');
+    return;
+  }
+  const aWon = Number(final.as) > Number(final.bs);
+  const d = final.when ? new Date(final.when) : new Date();
+  const season = d.getMonth() <= 3 ? 'Winter' : d.getMonth() <= 6 ? 'Spring' : 'Fall';
+  resetChampForm();
+  $('c-game').value = br.game || '';
+  $('c-title').value = br.title || '';
+  $('c-champion').value = aWon ? final.a : final.b;
+  $('c-runnerup').value = aWon ? final.b : final.a;
+  $('c-score').value = aWon ? `${final.as}–${final.bs}` : `${final.bs}–${final.as}`;
+  $('c-datelabel').value = `${season} ${d.getFullYear()}`;
+  $('c-date').value = (final.when || '').slice(0, 10) || new Date().toISOString().slice(0, 10);
+  $('champ-form-title').textContent = 'ADD CHAMPION (FROM BRACKET)';
+  $('c-cancel').hidden = false;
+  document.querySelector('#adnav button[data-sec="champions"]').click();
+  toast('Champion filled in from the bracket — check it, add a photo if you like, then SAVE CHAMPION.');
+});
+
 /* ================= news ================= */
 
 let newsCache = [];
@@ -965,12 +1073,12 @@ $('dm-form').addEventListener('submit', async e => {
 // — including unsaved edits — is streamed into it and rendered by public.js.
 
 const PREVIEW_PAGE = {
-  home: '/home', matches: '/matches', bracket: '/matches',
+  home: '/home', matches: '/matches', bracket: '/matches', champions: '/matches',
   news: '/news', photos: '/photos',
   videos: '/videos', site: '/home', officers: '/home'
 };
 const NO_PREVIEW = { officers: true };
-const PREVIEW_TAB = { matches: 'schedule', bracket: 'bracket' };
+const PREVIEW_TAB = { matches: 'schedule', bracket: 'bracket', champions: 'champions' };
 
 let activeSec = 'home';
 let formsReady = false;
@@ -998,6 +1106,7 @@ function buildPreviewData() {
   const newsDraft = collectNewsForm();
   const photoDraft = collectPhotoForm();
   const videoDraft = collectVideoForm();
+  const champDraft = collectChampForm();
 
   let news = draftedList(newsCache, 'n-id', newsDraft, !!newsDraft.title);
   if (newsDraft.title && newsDraft.pinned) news = news.map(n => n.id !== ($('n-id').value || '__draft__') && n.pinned ? { ...n, pinned: false } : n);
@@ -1014,7 +1123,8 @@ function buildPreviewData() {
     collections: {
       news,
       photos: draftedList(photoCache, 'p-id', photoDraft, !!(photoDraft.caption || photoDraft.image)),
-      videos
+      videos,
+      champions: draftedList(champCache, 'c-id', champDraft, !!champDraft.champion)
     }
   };
 }
@@ -1051,7 +1161,7 @@ $('preview-toggle').addEventListener('click', () => {
 
 async function loadAll() {
   await Promise.all([
-    refreshHome(), refreshMatchpage(), refreshBracket(),
+    refreshHome(), refreshMatchpage(), refreshBracket(), refreshChamps(),
     refreshNews(), refreshPhotos(), refreshVideos(), refreshSite(), refreshOfficers()
   ]);
   formsReady = true;

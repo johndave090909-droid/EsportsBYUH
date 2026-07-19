@@ -51,6 +51,7 @@
       <button data-sec="home" class="active">HOME PAGE</button>
       <button data-sec="matches">MATCHES PAGE</button>
       <button data-sec="bracket">BRACKET</button>
+      <button data-sec="champions">CHAMPIONS</button>
       <button data-sec="news">NEWS</button>
       <button data-sec="photos">PHOTOS</button>
       <button data-sec="videos">VIDEOS</button>
@@ -129,10 +130,39 @@
           <input type="number" id="b-teams" min="2" max="64" placeholder="# of teams" style="width:130px">
           <button type="button" class="btn-sm" id="b-build">BUILD ROUNDS</button>
           <button type="button" class="btn-sm" id="b-add-round">+ ADD ROUND</button>
+          <button type="button" class="btn-sm" id="b-archive" title="Save the final's winner to the hall of fame">🏆 ARCHIVE CHAMPION</button>
         </div>
         <div class="bracket-edit" id="b-rounds"></div>
         <div class="actions"><button class="btn">SAVE BRACKET</button></div>
       </form>
+    </section>
+
+    <!-- ============ CHAMPIONS ============ -->
+    <section class="asec" id="sec-champions">
+      <h1>Champions</h1>
+      <p class="hint">The club's hall of fame — every entry shows on the Matches page's CHAMPIONS tab, and the newest entry <b>per game</b> becomes that game's card in "Reigning Champions" on the home page. When a tournament ends, press 🏆 ARCHIVE CHAMPION on the Bracket page and this form fills itself in from the final — or add past tournaments by hand any time.</p>
+      <form id="form-champ" class="panel card">
+        <h3 id="champ-form-title">ADD CHAMPION</h3>
+        <input type="hidden" id="c-id">
+        <div class="form-grid">
+          <label class="f">GAME<input id="c-game" list="game-options" required placeholder="e.g. VALORANT"></label>
+          <label class="f">TOURNAMENT<input id="c-title" required placeholder="e.g. Seasider Cup Spring Invitational"></label>
+          <label class="f">CHAMPION (TEAM OR PLAYER)<input id="c-champion" required></label>
+          <label class="f">RUNNER-UP<input id="c-runnerup"></label>
+          <label class="f">FINAL SCORE<input id="c-score" placeholder="e.g. 3–2"></label>
+          <label class="f">SEASON LABEL<input id="c-datelabel" placeholder="e.g. Spring 2026"></label>
+          <label class="f">DATE (NEWEST SHOWS FIRST)<input type="date" id="c-date"></label>
+          <label class="f">TEAM PHOTO (OPTIONAL)
+            <span class="imgpick"><input id="c-image" placeholder="Image URL — or upload →"><input type="file" id="c-image-file" data-target="c-image" accept="image/*" hidden><button type="button" class="btn-sm" data-file="c-image-file">UPLOAD</button></span>
+            <img class="prev" id="c-image-prev" alt="" hidden>
+          </label>
+        </div>
+        <div class="actions">
+          <button class="btn">SAVE CHAMPION</button>
+          <button type="button" class="btn-sm" id="c-cancel" hidden>CANCEL EDIT</button>
+        </div>
+      </form>
+      <div id="champ-admin-list"></div>
     </section>
 
     <!-- ============ NEWS ============ -->

@@ -60,5 +60,6 @@ service cloud.firestore {
     match /news/{doc}     { allow read: if true; allow write: if isOfficer(); }
     match /photos/{doc}   { allow read: if true; allow write: if isOfficer(); }
     match /videos/{doc}   { allow read: if true; allow write: if isOfficer(); }
+    match /champions/{doc} { allow read: if true; allow write: if isOfficer(); }
   }
 }

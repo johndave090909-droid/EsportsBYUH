@@ -7,7 +7,7 @@ import { firebaseConfig } from './firebase-config.js';
 import { SEED, FRESH } from './seed-data.js';
 
 const CONFIGURED = !!(firebaseConfig && firebaseConfig.apiKey && !firebaseConfig.apiKey.startsWith('PASTE'));
-const COLLECTIONS = ['matches', 'news', 'photos', 'videos'];
+const COLLECTIONS = ['matches', 'news', 'photos', 'videos', 'champions'];
 
 // Brackets are stored as { title, rounds: [{ name, matches: [{a,as,b,bs}] }] }.
 // Older saves used fixed { qf, sf, final, finalHeader } — convert on read.

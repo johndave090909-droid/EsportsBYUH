@@ -28,6 +28,7 @@
     <button data-tab="results">RESULTS</button>
     <button data-tab="bracket">BRACKET</button>
     <button data-tab="standings">STANDINGS</button>
+    <button data-tab="champions">CHAMPIONS</button>
   </div>
 </section>
 <section class="wrap" style="padding-top:40px;padding-bottom:40px">
@@ -80,6 +81,13 @@
       <div style="padding:12px 24px;font-size:12px;color:#8B93A3">Top 4 qualify for playoffs · Valorant division, Spring 2026</div>
     </div>
   </div>
+  <div class="tabpane" id="pane-champions">
+    <div class="champs">
+      <div class="card champ-card"><div class="cgame">🏆 VALORANT</div><div class="cname">Reef Sharks</div><div class="ct">Fall Cup 2025</div><div class="csub">def. Night Marchers · 3–2 · Fall 2025</div></div>
+      <div class="card champ-card"><div class="cgame">🏆 SMASH ULTIMATE</div><div class="cname">K. Fonoti</div><div class="ct">Fall Cup 2025 — Smash Bracket</div><div class="csub">def. M. Tanaka · 3–1 · Fall 2025</div></div>
+      <div class="card champ-card"><div class="cgame">🏆 DOTA 2</div><div class="cname">Mana Five</div><div class="ct">Summer Tournament 2025</div><div class="csub">def. Iosepa Five · 2–1 · Summer 2025</div></div>
+    </div>
+  </div>
 </section>
 <section id="register" class="register" style="margin-left:40px;margin-right:40px">
   <div>
@@ -97,6 +105,9 @@ document.querySelectorAll('.tabs button').forEach(btn => btn.addEventListener('c
   document.querySelectorAll('.tabs button').forEach(b => b.classList.toggle('active', b === btn));
   document.querySelectorAll('.tabpane').forEach(p => p.classList.toggle('active', p.id === 'pane-' + btn.dataset.tab));
 }));
+// /matches#champions (etc.) opens that tab directly
+const hashTab = document.querySelector('.tabs button[data-tab="' + location.hash.slice(1) + '"]');
+if (hashTab) hashTab.click();
 </script>
 <script type="module" src="public.js"></script>
 </body>

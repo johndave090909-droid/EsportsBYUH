@@ -57,6 +57,20 @@ const byDateDesc = (a, b) => String(b.date || '').localeCompare(String(a.date ||
 
 const GAME_STYLE = "font-family:'Chakra Petch',sans-serif;font-size:12px;letter-spacing:.14em;color:#FDB913;display:block";
 
+/* ---------- champions ---------- */
+
+const byChampDate = (a, b) => String(b.date || '').localeCompare(String(a.date || ''));
+
+function champCardHTML(c) {
+  return `<div class="card champ-card">
+    ${c.image ? `<img src="${esc(c.image)}" alt="${esc(c.champion)}">` : ''}
+    <div class="cgame">🏆 ${esc((c.game || 'CLUB').toUpperCase())}</div>
+    <div class="cname">${esc(c.champion)}</div>
+    <div class="ct">${esc(c.title || '')}</div>
+    <div class="csub">${esc([c.runnerUp ? 'def. ' + c.runnerUp : '', c.score, c.dateLabel].filter(Boolean).join(' · '))}</div>
+  </div>`;
+}
+
 const emptyMsg = (text, span) =>
   `<p style="${span ? 'grid-column:1/-1;' : ''}color:#8B93A3;font-size:15px;padding:8px 0;margin:0">${esc(text)}</p>`;
 
@@ -161,6 +175,19 @@ async function renderHome(site) {
         <div class="foot"><span>${esc(fmtDT(m.datetime) || 'Time TBA')}</span><span>${esc(m.location)}</span></div>
       </div>`).join('')
       : emptyMsg('No matches scheduled yet — check back soon.', true);
+  }
+
+  // Reigning champions: the newest champion entry for each game.
+  const champsSec = $('champs-sec');
+  if (champsSec) {
+    const newest = new Map();
+    for (const c of (await listData('champions')).sort(byChampDate)) {
+      const key = (c.game || 'CLUB').trim().toUpperCase();
+      if (c.champion && !newest.has(key)) newest.set(key, c);
+    }
+    const reigning = [...newest.values()];
+    $('home-champs').innerHTML = reigning.map(champCardHTML).join('');
+    champsSec.hidden = !reigning.length;
   }
 
   const news = (await listData('news')).sort(byDateDesc).slice(0, 3);
@@ -275,6 +302,14 @@ async function renderMatchesPage(site) {
     } else {
       bEl.innerHTML = emptyMsg('The bracket will be posted when the tournament begins.');
     }
+  }
+
+  const chEl = $('pane-champions');
+  if (chEl) {
+    const champs = (await listData('champions')).filter(c => c.champion).sort(byChampDate);
+    chEl.innerHTML = champs.length
+      ? `<div class="champs">${champs.map(champCardHTML).join('')}</div>`
+      : emptyMsg('No champions crowned yet — the first tournament is coming.');
   }
 
   const stEl = $('pane-standings');

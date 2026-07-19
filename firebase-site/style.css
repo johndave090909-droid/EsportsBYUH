@@ -139,6 +139,14 @@ footer{margin-top:auto;border-top:1px solid rgba(255,255,255,.08);padding:32px 4
 .pinned .meta .d{font-family:'Chakra Petch',sans-serif;font-size:12px;letter-spacing:.12em;color:#FDB913}
 .post p,.pinned p{margin:0;color:#8B93A3;font-size:15px;line-height:1.6;max-width:680px;text-wrap:pretty}
 .pinned p{color:#C9CFDA;margin-bottom:16px}
+/* champions */
+.champs{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:22px}
+.champ-card{border-color:rgba(253,185,19,.35);padding:22px;display:flex;flex-direction:column;gap:9px}
+.champ-card img{width:100%;height:150px;object-fit:cover;margin:-22px -22px 8px;width:calc(100% + 44px)}
+.champ-card .cgame{font-family:'Chakra Petch',sans-serif;font-size:12px;letter-spacing:.14em;color:#FDB913}
+.champ-card .cname{font-family:'Chakra Petch',sans-serif;font-size:23px;font-weight:700;color:#FDB913;text-transform:uppercase;line-height:1.15}
+.champ-card .ct{font-size:13.5px;color:#C9CFDA}
+.champ-card .csub{font-size:13px;color:#8B93A3}
 /* facebook live embed */
 .live-badge{color:#E31837;animation:livePulse 1.5s ease-in-out infinite}
 @keyframes livePulse{0%,100%{opacity:1}50%{opacity:.4}}
