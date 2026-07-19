@@ -62,12 +62,16 @@ const GAME_STYLE = "font-family:'Chakra Petch',sans-serif;font-size:12px;letter-
 const byChampDate = (a, b) => String(b.date || '').localeCompare(String(a.date || ''));
 
 function champCardHTML(c) {
+  const foot = [
+    c.runnerUp ? `beat ${esc(c.runnerUp)}${c.score ? ` <b>${esc(c.score)}</b>` : ''}` : (c.score ? `<b>${esc(c.score)}</b>` : ''),
+    c.dateLabel ? esc(c.dateLabel) : ''
+  ].filter(Boolean).join(' · ');
   return `<div class="card champ-card">
     ${c.image ? `<img src="${esc(c.image)}" alt="${esc(c.champion)}">` : ''}
-    <div class="cgame">🏆 ${esc((c.game || 'CLUB').toUpperCase())}</div>
+    <div class="cgame">${esc((c.game || 'CLUB').toUpperCase())}</div>
     <div class="cname">${esc(c.champion)}</div>
     <div class="ct">${esc(c.title || '')}</div>
-    <div class="csub">${esc([c.runnerUp ? 'def. ' + c.runnerUp : '', c.score, c.dateLabel].filter(Boolean).join(' · '))}</div>
+    ${foot ? `<div class="csub">${foot}</div>` : ''}
   </div>`;
 }
 
